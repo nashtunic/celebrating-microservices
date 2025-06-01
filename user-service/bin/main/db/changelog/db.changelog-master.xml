@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <!-- Drop existing tables if they exist -->
+    <changeSet id="1" author="celebrating">
+        <sql>
+            DROP TABLE IF EXISTS followers CASCADE;
+            DROP TABLE IF EXISTS user_stats CASCADE;
+            DROP TABLE IF EXISTS celebrity_profiles CASCADE;
+            DROP TABLE IF EXISTS users CASCADE;
+        </sql>
+    </changeSet>
+
+    <!-- Base Users Table -->
+    <changeSet id="2" author="celebrating">
+        <createTable tableName="users">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(50)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="email" type="varchar(100)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(20)" defaultValue="USER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="full_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bio" type="text"/>
+            <column name="location" type="varchar(255)"/>
+            <column name="profile_image_url" type="text"/>
+            <column name="is_private" type="boolean" defaultValueBoolean="false"/>
+            <column name="is_verified" type="boolean" defaultValueBoolean="false"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="timestamp with time zone" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Celebrity Profiles Table -->
+    <changeSet id="3" author="celebrating">
+        <createTable tableName="celebrity_profiles">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_celebrity_user" references="users(id)"/>
+            </column>
+            <column name="stage_name" type="varchar(100)"/>
+            <column name="professions" type="text[]"/>
+            <column name="major_achievements" type="text[]"/>
+            <column name="notable_projects" type="text[]"/>
+            <column name="collaborations" type="text[]"/>
+            <column name="net_worth" type="varchar(50)"/>
+            <column name="verified_at" type="timestamp with time zone"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="timestamp with time zone" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- User Stats Table -->
+    <changeSet id="4" author="celebrating">
+        <createTable tableName="user_stats">
+            <column name="user_id" type="uuid">
+                <constraints primaryKey="true" nullable="false" foreignKeyName="fk_stats_user" references="users(id)"/>
+            </column>
+            <column name="posts_count" type="int" defaultValue="0"/>
+            <column name="followers_count" type="int" defaultValue="0"/>
+            <column name="following_count" type="int" defaultValue="0"/>
+            <column name="updated_at" type="timestamp with time zone" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Followers Table -->
+    <changeSet id="5" author="celebrating">
+        <createTable tableName="followers">
+            <column name="follower_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_follower" references="users(id)"/>
+            </column>
+            <column name="following_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_following" references="users(id)"/>
+            </column>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        <addPrimaryKey 
+            tableName="followers" 
+            columnNames="follower_id, following_id"
+            constraintName="pk_followers"/>
+    </changeSet>
+
+    <!-- Indexes -->
+    <changeSet id="6" author="celebrating">
+        <createIndex indexName="idx_users_username" tableName="users">
+            <column name="username"/>
+        </createIndex>
+        <createIndex indexName="idx_users_email" tableName="users">
+            <column name="email"/>
+        </createIndex>
+        <createIndex indexName="idx_users_role" tableName="users">
+            <column name="role"/>
+        </createIndex>
+        <createIndex indexName="idx_celebrity_profiles_user_id" tableName="celebrity_profiles">
+            <column name="user_id"/>
+        </createIndex>
+        <createIndex indexName="idx_celebrity_profiles_stage_name" tableName="celebrity_profiles">
+            <column name="stage_name"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Triggers -->
+    <changeSet id="7" author="celebrating">
+        <sql splitStatements="false">
+            CREATE OR REPLACE FUNCTION update_updated_at()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                NEW.updated_at = CURRENT_TIMESTAMP;
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER users_updated_at
+                BEFORE UPDATE ON users
+                FOR EACH ROW
+                EXECUTE FUNCTION update_updated_at();
+
+            CREATE TRIGGER celebrity_profiles_updated_at
+                BEFORE UPDATE ON celebrity_profiles
+                FOR EACH ROW
+                EXECUTE FUNCTION update_updated_at();
+
+            CREATE TRIGGER user_stats_updated_at
+                BEFORE UPDATE ON user_stats
+                FOR EACH ROW
+                EXECUTE FUNCTION update_updated_at();
+        </sql>
+    </changeSet>
+</databaseChangeLog> 

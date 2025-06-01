@@ -1,0 +1,26 @@
+# Java
+*.class
+*.jar
+build/
+.gradle/
+
+# Spring Boot
+target/
+*.log
+
+# Flutter
+frontend-mobile/.dart_tool/
+frontend-mobile/.flutter-plugins
+frontend-mobile/.flutter-plugins-dependencies
+frontend-mobile/build/
+
+# Docker
+docker/.env
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Misc
+*.DS_Store
