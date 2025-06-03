@@ -1,6 +1,7 @@
 package com.celebrating.post.controller;
 
 import com.celebrating.post.model.Post;
+import com.celebrating.post.model.Like;
 import com.celebrating.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -55,7 +56,14 @@ public class PostController {
     public Flux<Post> getPostsByCelebrationType(@PathVariable String celebrationType) {
         return postService.getPostsByCelebrationType(celebrationType);
     }
-} 
+
+    @PostMapping("/{postId}/like")
+    public Mono<Like> likePost(@PathVariable Long postId, @RequestParam Long userId) {
+        return postService.likePost(postId, userId);
+    }
+
+    @DeleteMapping("/{postId}/like")
+    public Mono<Void> unlikePost(@PathVariable Long postId, @RequestParam Long userId) {
         return postService.unlikePost(postId, userId);
     }
 
