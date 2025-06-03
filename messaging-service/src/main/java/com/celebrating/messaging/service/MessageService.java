@@ -31,12 +31,6 @@ public class MessageService {
     public Mono<Void> markConversationAsRead(Long receiverId, Long senderId) {
         return messageRepository.markConversationAsRead(receiverId, senderId);
     }
-} 
-    }
-
-    public Mono<Void> markConversationAsRead(Long receiverId, Long senderId) {
-        return messageRepository.markConversationAsRead(receiverId, senderId);
-    }
 
     public Mono<Message> markMessageAsRead(Long messageId) {
         return messageRepository.findById(messageId)
