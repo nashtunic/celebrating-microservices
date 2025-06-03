@@ -3,6 +3,7 @@ package com.celebrating.post.service;
 import com.celebrating.post.model.Post;
 import com.celebrating.post.model.Comment;
 import com.celebrating.post.model.Like;
+import com.celebrating.post.model.PostStatus;
 import com.celebrating.post.repository.PostRepository;
 import com.celebrating.post.repository.CommentRepository;
 import com.celebrating.post.repository.LikeRepository;
