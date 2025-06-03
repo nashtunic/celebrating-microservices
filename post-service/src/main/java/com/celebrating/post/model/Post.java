@@ -22,9 +22,3 @@ public class Post {
     private int likesCount;
     private int commentsCount;
 }
-
-enum PostStatus {
-    ACTIVE,
-    DELETED,
-    ARCHIVED
-}
