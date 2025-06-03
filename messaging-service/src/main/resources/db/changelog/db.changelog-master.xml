@@ -7,25 +7,41 @@
 
     <changeSet id="1" author="celebrating">
         <createTable tableName="messages">
-            <column name="id" type="varchar(36)">
+            <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="sender_id" type="varchar(36)">
+            <column name="chat_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="receiver_id" type="varchar(36)">
+            <column name="sender_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="receiver_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
             <column name="content" type="text">
                 <constraints nullable="false"/>
             </column>
-            <column name="timestamp" type="datetime">
-                <constraints nullable="false"/>
-            </column>
             <column name="read" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="media_url" type="varchar(255)"/>
         </createTable>
+        
+        <createIndex tableName="messages" indexName="idx_messages_chat_id">
+            <column name="chat_id"/>
+        </createIndex>
+        
+        <createIndex tableName="messages" indexName="idx_messages_sender_id">
+            <column name="sender_id"/>
+        </createIndex>
+        
+        <createIndex tableName="messages" indexName="idx_messages_receiver_id">
+            <column name="receiver_id"/>
+        </createIndex>
     </changeSet>
 
 </databaseChangeLog> 
