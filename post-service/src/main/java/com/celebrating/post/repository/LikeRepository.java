@@ -6,7 +6,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface LikeRepository extends R2dbcRepository<Like, Long> {
-    Flux<Like> findByPostId(Long postId);
-    Flux<Like> findByUserId(Long userId);
     Mono<Like> findByPostIdAndUserId(Long postId, Long userId);
+    Flux<Like> findByPostId(Long postId);
+    Mono<Void> deleteByPostIdAndUserId(Long postId, Long userId);
 }
