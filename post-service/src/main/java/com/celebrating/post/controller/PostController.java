@@ -1,6 +1,7 @@
 package com.celebrating.post.controller;
 
 import com.celebrating.post.model.Post;
+import com.celebrating.post.model.Comment;
 import com.celebrating.post.model.Like;
 import com.celebrating.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,6 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class PostController {
-
     private final PostService postService;
 
     @PostMapping
@@ -57,12 +57,30 @@ public class PostController {
         return postService.getPostsByCelebrationType(celebrationType);
     }
 
+    @PostMapping("/{postId}/comments")
+    public Mono<Comment> addComment(@PathVariable Long postId, @Valid @RequestBody Comment comment) {
+        comment.setPostId(postId);
+        return postService.addComment(comment);
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> deleteComment(@PathVariable Long commentId) {
+        return postService.deleteComment(commentId);
+    }
+
+    @GetMapping("/{postId}/comments")
+    public Flux<Comment> getPostComments(@PathVariable Long postId) {
+        return postService.getPostComments(postId);
+    }
+
     @PostMapping("/{postId}/like")
     public Mono<Like> likePost(@PathVariable Long postId, @RequestParam Long userId) {
         return postService.likePost(postId, userId);
     }
 
     @DeleteMapping("/{postId}/like")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> unlikePost(@PathVariable Long postId, @RequestParam Long userId) {
         return postService.unlikePost(postId, userId);
     }
