@@ -19,6 +19,36 @@ public class MessageService {
         return messageRepository.save(message);
     }
 
+    public Flux<Message> getConversation(Long userId1, Long userId2) {
+        return messageRepository.findByUserId(userId1)
+            .filter(message -> 
+                (message.getSenderId().equals(userId1) && message.getReceiverId().equals(userId2)) ||
+                (message.getSenderId().equals(userId2) && message.getReceiverId().equals(userId1))
+            )
+            .sort((m1, m2) -> m2.getCreatedAt().compareTo(m1.getCreatedAt()));
+    }
+
+    public Flux<Message> getUnreadMessages(Long receiverId) {
+        return messageRepository.findByUserId(receiverId)
+            .filter(message -> 
+                message.getReceiverId().equals(receiverId) && !message.isRead()
+            );
+    }
+
+    public Mono<Void> markConversationAsRead(Long receiverId, Long senderId) {
+        return messageRepository.findByUserId(receiverId)
+            .filter(message -> 
+                message.getReceiverId().equals(receiverId) && 
+                message.getSenderId().equals(senderId) && 
+                !message.isRead()
+            )
+            .flatMap(message -> {
+                message.setRead(true);
+                return messageRepository.save(message);
+            })
+            .then();
+    }
+
     public Flux<Message> getChatMessages(Long chatId) {
         return messageRepository.findByChatId(chatId);
     }
