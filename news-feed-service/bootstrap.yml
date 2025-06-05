@@ -1,6 +1,6 @@
 spring:
   application:
-    name: post-service
+    name: news-feed-service
   cloud:
     config:
       uri: http://localhost:8888
