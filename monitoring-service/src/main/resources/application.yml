@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: monitoring-service
+  config:
+    import: "optional:configserver:"
+  thymeleaf:
+    cache: false
+
+server:
+  port: 8085
+  servlet:
+    context-path: /monitor
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://41.89.64.12:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    hostname: 41.89.64.12
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    com.celebrating.monitoring: DEBUG 
