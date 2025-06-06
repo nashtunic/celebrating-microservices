@@ -35,7 +35,6 @@ check_port() {
 start_service() {
     service_name=$1
     port=$2
-    jar_path=$3
     
     echo -e "${YELLOW}Starting $service_name on port $port...${NC}"
     
@@ -102,23 +101,23 @@ check_status() {
 case "$1" in
     "start")
         # Start services in order
-        start_service "config-server" $CONFIG_SERVER_PORT "target/config-server-0.0.1-SNAPSHOT.jar"
+        start_service "config-server" $CONFIG_SERVER_PORT
         sleep 10
-        start_service "service-registry" $SERVICE_REGISTRY_PORT "target/service-registry-0.0.1-SNAPSHOT.jar"
+        start_service "service-registry" $SERVICE_REGISTRY_PORT
         sleep 10
-        start_service "api-gateway" $API_GATEWAY_PORT "target/api-gateway-0.0.1-SNAPSHOT.jar"
+        start_service "api-gateway" $API_GATEWAY_PORT
         sleep 10
-        start_service "auth-service" $AUTH_SERVICE_PORT "target/auth-service-0.0.1-SNAPSHOT.jar"
-        start_service "user-service" $USER_SERVICE_PORT "target/user-service-0.0.1-SNAPSHOT.jar"
-        start_service "post-service" $POST_SERVICE_PORT "target/post-service-0.0.1-SNAPSHOT.jar"
-        start_service "messaging-service" $MESSAGING_SERVICE_PORT "target/messaging-service-0.0.1-SNAPSHOT.jar"
-        start_service "notification-service" $NOTIFICATION_SERVICE_PORT "target/notification-service-0.0.1-SNAPSHOT.jar"
-        start_service "search-service" $SEARCH_SERVICE_PORT "target/search-service-0.0.1-SNAPSHOT.jar"
-        start_service "rating-review-service" $RATING_REVIEW_PORT "target/rating-review-service-0.0.1-SNAPSHOT.jar"
-        start_service "news-feed-service" $NEWS_FEED_PORT "target/news-feed-service-0.0.1-SNAPSHOT.jar"
-        start_service "award-service" $AWARD_SERVICE_PORT "target/award-service-0.0.1-SNAPSHOT.jar"
-        start_service "moderation-service" $MODERATION_SERVICE_PORT "target/moderation-service-0.0.1-SNAPSHOT.jar"
-        start_service "analytics-logging-service" $ANALYTICS_PORT "target/analytics-logging-service-0.0.1-SNAPSHOT.jar"
+        start_service "auth-service" $AUTH_SERVICE_PORT
+        start_service "user-service" $USER_SERVICE_PORT
+        start_service "post-service" $POST_SERVICE_PORT
+        start_service "messaging-service" $MESSAGING_SERVICE_PORT
+        start_service "notification-service" $NOTIFICATION_SERVICE_PORT
+        start_service "search-service" $SEARCH_SERVICE_PORT
+        start_service "rating-review-service" $RATING_REVIEW_PORT
+        start_service "news-feed-service" $NEWS_FEED_PORT
+        start_service "award-service" $AWARD_SERVICE_PORT
+        start_service "moderation-service" $MODERATION_SERVICE_PORT
+        start_service "analytics-logging-service" $ANALYTICS_PORT
         ;;
         
     "stop")
