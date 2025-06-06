@@ -52,7 +52,16 @@ start_service() {
         return 1
     fi
     
-    nohup java -jar build/libs/$service_name-0.0.1-SNAPSHOT.jar > ../logs/$service_name.log 2>&1 &
+    # Find the actual service JAR file
+    JAR_FILE=$(find build/libs -name "$service_name-*.jar" -not -name "*-plain.jar" | head -n 1)
+    if [ -z "$JAR_FILE" ]; then
+        echo -e "${RED}No JAR file found for $service_name${NC}"
+        cd ..
+        return 1
+    fi
+    
+    echo -e "${YELLOW}Starting $service_name with JAR: $JAR_FILE${NC}"
+    nohup java -jar "$JAR_FILE" > ../logs/$service_name.log 2>&1 &
     echo $! > ../logs/$service_name.pid
     cd ..
     
