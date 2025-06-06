@@ -1,0 +1,17 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: auth-service
+  security:
+    jwt:
+      secret: 8y/B?E(H+MbQeThWmZq4t6w9z$C&F)J@NcRfUjXn2r5u8x/A%D*G-KaPdSgVkYp3
+      expiration: 86400000 # 24 hours in milliseconds
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.data.r2dbc: DEBUG
+    io.r2dbc: DEBUG 

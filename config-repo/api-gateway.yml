@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/v1/auth/**
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/v1/users/**
+        - id: post-service
+          uri: lb://POST-SERVICE
+          predicates:
+            - Path=/api/v1/posts/**
+        - id: messaging-service
+          uri: lb://MESSAGING-SERVICE
+          predicates:
+            - Path=/api/v1/messages/**
+        - id: notification-service
+          uri: lb://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/api/v1/notifications/**
+        - id: search-service
+          uri: lb://SEARCH-SERVICE
+          predicates:
+            - Path=/api/v1/search/**
+        - id: rating-review-service
+          uri: lb://RATING-REVIEW-SERVICE
+          predicates:
+            - Path=/api/v1/ratings/**, /api/v1/reviews/**
+        - id: award-service
+          uri: lb://AWARD-SERVICE
+          predicates:
+            - Path=/api/v1/awards/**
+        - id: moderation-service
+          uri: lb://MODERATION-SERVICE
+          predicates:
+            - Path=/api/v1/moderation/**
+        - id: analytics-logging-service
+          uri: lb://ANALYTICS-LOGGING-SERVICE
+          predicates:
+            - Path=/api/v1/analytics/**, /api/v1/logs/**
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always 
