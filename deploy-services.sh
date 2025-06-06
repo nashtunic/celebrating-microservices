@@ -43,6 +43,9 @@ start_service() {
         return 1
     fi
     
+    # Create logs directory if it doesn't exist
+    mkdir -p logs
+    
     cd $service_name
     echo -e "${YELLOW}Building $service_name...${NC}"
     ./gradlew clean build -x test
@@ -52,7 +55,16 @@ start_service() {
         return 1
     fi
     
-    nohup java -jar build/libs/$service_name-0.0.1-SNAPSHOT.jar > ../logs/$service_name.log 2>&1 &
+    # Use absolute path for the JAR file
+    JAR_PATH="$(pwd)/build/libs/$service_name-0.0.1-SNAPSHOT.jar"
+    if [ ! -f "$JAR_PATH" ]; then
+        echo -e "${RED}JAR file not found at $JAR_PATH${NC}"
+        cd ..
+        return 1
+    fi
+    
+    echo -e "${YELLOW}Starting $service_name with JAR: $JAR_PATH${NC}"
+    nohup java -jar "$JAR_PATH" > ../logs/$service_name.log 2>&1 &
     echo $! > ../logs/$service_name.pid
     cd ..
     
