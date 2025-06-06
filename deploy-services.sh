@@ -45,8 +45,16 @@ start_service() {
     fi
     
     cd $service_name
-    nohup java -jar $jar_path > $service_name.log 2>&1 &
-    echo $! > $service_name.pid
+    echo -e "${YELLOW}Building $service_name...${NC}"
+    ./gradlew clean build -x test
+    if [ $? -ne 0 ]; then
+        echo -e "${RED}Failed to build $service_name${NC}"
+        cd ..
+        return 1
+    fi
+    
+    nohup java -jar build/libs/$service_name-0.0.1-SNAPSHOT.jar > ../logs/$service_name.log 2>&1 &
+    echo $! > ../logs/$service_name.pid
     cd ..
     
     # Wait for service to start
