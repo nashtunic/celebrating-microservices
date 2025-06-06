@@ -45,27 +45,16 @@ start_service() {
     
     cd $service_name
     echo -e "${YELLOW}Building $service_name...${NC}"
-    
-    # First run the Gradle build
-    ./gradlew bootJar
+    ./gradlew clean build -x test
     if [ $? -ne 0 ]; then
         echo -e "${RED}Failed to build $service_name${NC}"
         cd ..
         return 1
     fi
     
-    # Use the exact JAR file name we know exists
-    JAR_FILE="build/libs/$service_name-0.0.1-SNAPSHOT.jar"
-    if [ ! -f "$JAR_FILE" ]; then
-        echo -e "${RED}JAR file not found: $JAR_FILE${NC}"
-        cd ..
-        return 1
-    fi
-    
-    echo -e "${YELLOW}Starting $service_name with JAR: $JAR_FILE${NC}"
-    cd ..  # Go back to root directory before running the JAR
-    nohup java -jar "$service_name/$JAR_FILE" > logs/$service_name.log 2>&1 &
-    echo $! > logs/$service_name.pid
+    nohup java -jar build/libs/$service_name-0.0.1-SNAPSHOT.jar > ../logs/$service_name.log 2>&1 &
+    echo $! > ../logs/$service_name.pid
+    cd ..
     
     # Wait for service to start
     sleep 10
@@ -80,11 +69,11 @@ start_service() {
 # Function to stop a service
 stop_service() {
     service_name=$1
-    if [ -f "logs/$service_name.pid" ]; then
-        pid=$(cat logs/$service_name.pid)
+    if [ -f "$service_name/$service_name.pid" ]; then
+        pid=$(cat $service_name/$service_name.pid)
         echo -e "${YELLOW}Stopping $service_name (PID: $pid)...${NC}"
         kill $pid
-        rm logs/$service_name.pid
+        rm $service_name/$service_name.pid
         echo -e "${GREEN}$service_name stopped${NC}"
     else
         echo -e "${RED}$service_name is not running${NC}"
@@ -96,13 +85,13 @@ check_status() {
     service_name=$1
     port=$2
     
-    if [ -f "logs/$service_name.pid" ]; then
-        pid=$(cat logs/$service_name.pid)
+    if [ -f "$service_name/$service_name.pid" ]; then
+        pid=$(cat $service_name/$service_name.pid)
         if ps -p $pid > /dev/null; then
             echo -e "${GREEN}$service_name is running (PID: $pid)${NC}"
         else
             echo -e "${RED}$service_name is not running${NC}"
-            rm logs/$service_name.pid
+            rm $service_name/$service_name.pid
         fi
     else
         echo -e "${RED}$service_name is not running${NC}"
