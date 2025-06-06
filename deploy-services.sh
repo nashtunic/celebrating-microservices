@@ -54,10 +54,10 @@ start_service() {
         return 1
     fi
     
-    # Find the actual service JAR file (excluding gradle-wrapper.jar and plain.jar)
-    JAR_FILE=$(find build/libs -name "$service_name-*.jar" -not -name "*-plain.jar" -not -name "gradle-wrapper.jar" | head -n 1)
-    if [ -z "$JAR_FILE" ]; then
-        echo -e "${RED}No JAR file found for $service_name${NC}"
+    # Use the exact JAR file name we know exists
+    JAR_FILE="build/libs/$service_name-0.0.1-SNAPSHOT.jar"
+    if [ ! -f "$JAR_FILE" ]; then
+        echo -e "${RED}JAR file not found: $JAR_FILE${NC}"
         cd ..
         return 1
     fi
