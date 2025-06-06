@@ -45,6 +45,8 @@ start_service() {
     
     cd $service_name
     echo -e "${YELLOW}Building $service_name...${NC}"
+    
+    # First run the Gradle build
     ./gradlew clean build -x test
     if [ $? -ne 0 ]; then
         echo -e "${RED}Failed to build $service_name${NC}"
@@ -61,9 +63,9 @@ start_service() {
     fi
     
     echo -e "${YELLOW}Starting $service_name with JAR: $JAR_FILE${NC}"
-    nohup java -jar "$JAR_FILE" > ../logs/$service_name.log 2>&1 &
-    echo $! > ../logs/$service_name.pid
-    cd ..
+    cd ..  # Go back to root directory before running the JAR
+    nohup java -jar "$service_name/$JAR_FILE" > logs/$service_name.log 2>&1 &
+    echo $! > logs/$service_name.pid
     
     # Wait for service to start
     sleep 10
