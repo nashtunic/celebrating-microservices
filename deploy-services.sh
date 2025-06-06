@@ -47,13 +47,13 @@ start_service() {
     mkdir -p logs
     
     cd $service_name
-    echo -e "${YELLOW}Building $service_name...${NC}"
     
     # First ensure gradlew is executable
     chmod +x ./gradlew
     
-    # Run gradle build
-    ./gradlew clean build -x test
+    echo -e "${YELLOW}Building $service_name...${NC}"
+    # Run gradle build with --no-daemon to avoid any daemon issues
+    ./gradlew clean build -x test --no-daemon
     if [ $? -ne 0 ]; then
         echo -e "${RED}Failed to build $service_name${NC}"
         cd ..
@@ -69,7 +69,8 @@ start_service() {
     fi
     
     echo -e "${YELLOW}Starting $service_name with JAR: $JAR_PATH${NC}"
-    nohup java -jar "$JAR_PATH" > ../logs/$service_name.log 2>&1 &
+    # Run the JAR with proper Java options
+    nohup java -jar "$JAR_PATH" --spring.profiles.active=default > ../logs/$service_name.log 2>&1 &
     echo $! > ../logs/$service_name.pid
     cd ..
     
