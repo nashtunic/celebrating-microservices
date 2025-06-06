@@ -2,11 +2,11 @@ spring:
   application:
     name: user-service
   config:
-    import: "optional:configserver:"
+    import: "optional:configserver:http://41.89.64.12:8888"
   datasource:
-    url: jdbc:postgresql://localhost:5432/celebratedb
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://41.89.64.12:5432/celebratedb
+    username: celebrate
+    password: celebrate123
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 5
@@ -41,19 +41,19 @@ spring:
     clear-checksums: true
 
 server:
-  port: 8084
+  port: 9001
   servlet:
     context-path: /api/users
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://41.89.64.12:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: localhost
+    hostname: 41.89.64.12
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
 
@@ -72,4 +72,4 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.postgresql: DEBUG
-    com.zaxxer.hikari: DEBUG 
+    com.zaxxer.hikari: DEBUG
