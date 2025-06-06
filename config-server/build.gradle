@@ -33,6 +33,21 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+bootJar {
+    enabled = true
+    archiveClassifier = ''
+}
+
+jar {
+    enabled = true
+    archiveClassifier = 'plain'
+    manifest {
+        attributes(
+            'Main-Class': 'com.celebrating.config.ConfigServerApplication'
+        )
+    }
+}
+
 bootRun {
     mainClass = 'com.celebrating.config.ConfigServerApplication'
 }
