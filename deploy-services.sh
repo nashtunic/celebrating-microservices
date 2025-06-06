@@ -48,6 +48,11 @@ start_service() {
     
     cd $service_name
     echo -e "${YELLOW}Building $service_name...${NC}"
+    
+    # First ensure gradlew is executable
+    chmod +x ./gradlew
+    
+    # Run gradle build
     ./gradlew clean build -x test
     if [ $? -ne 0 ]; then
         echo -e "${RED}Failed to build $service_name${NC}"
@@ -55,7 +60,7 @@ start_service() {
         return 1
     fi
     
-    # Use absolute path for the JAR file
+    # Find the correct JAR file (excluding the -plain.jar)
     JAR_PATH="$(pwd)/build/libs/$service_name-0.0.1-SNAPSHOT.jar"
     if [ ! -f "$JAR_PATH" ]; then
         echo -e "${RED}JAR file not found at $JAR_PATH${NC}"
