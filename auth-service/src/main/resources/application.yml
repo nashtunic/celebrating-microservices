@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 9000
   servlet:
     context-path: /
 
@@ -7,11 +7,11 @@ spring:
   application:
     name: auth-service
   config:
-    import: "optional:configserver:"
+    import: "optional:configserver:http://41.89.64.12:8888"
   datasource:
-    url: jdbc:postgresql://localhost:5432/celebratedb
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://41.89.64.12:5432/celebratedb
+    username: celebrate
+    password: celebrate123
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 5
@@ -46,8 +46,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8081
-          jwk-set-uri: http://localhost:8081/.well-known/jwks.json
+          issuer-uri: http://41.89.64.12:9000
+          jwk-set-uri: http://41.89.64.12:9000/.well-known/jwks.json
 
 jwt:
   secret: 8y/B?E(H+MbQeThWmZq4t6w9z$C&F)J@NcRfUjXn2r5u8x/A%D*G-KaPdSgVkYp3
@@ -56,12 +56,12 @@ jwt:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://41.89.64.12:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: localhost
+    hostname: 41.89.64.12
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
 
