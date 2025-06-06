@@ -47,12 +47,17 @@ start_service() {
     mkdir -p logs
     
     cd $service_name
-    echo -e "${YELLOW}Building $service_name...${NC}"
     
     # First ensure gradlew is executable
+    if [ ! -f "./gradlew" ]; then
+        echo -e "${RED}Gradle wrapper not found in $service_name${NC}"
+        cd ..
+        return 1
+    fi
+    
     chmod +x ./gradlew
     
-    # Run gradle build
+    echo -e "${YELLOW}Building $service_name...${NC}"
     ./gradlew clean build -x test
     if [ $? -ne 0 ]; then
         echo -e "${RED}Failed to build $service_name${NC}"
