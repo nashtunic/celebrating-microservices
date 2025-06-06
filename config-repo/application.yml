@@ -2,17 +2,17 @@ spring:
   application:
     name: default-service
   datasource:
-    url: jdbc:mysql://localhost:3306/celebrating_db
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:postgresql://41.89.64.12:5432/celebratedb
+    username: celebrate
+    password: celebrate123
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
   mvc:
     cors:
@@ -25,11 +25,12 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://41.89.64.12:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
+    hostname: 41.89.64.12
 
 management:
   endpoints:
