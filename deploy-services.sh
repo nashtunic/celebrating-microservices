@@ -55,10 +55,16 @@ start_service() {
         return 1
     fi
     
+    # Make gradlew executable
     chmod +x ./gradlew
     
+    # Clean any existing build
+    echo -e "${YELLOW}Cleaning $service_name...${NC}"
+    ./gradlew clean
+    
     echo -e "${YELLOW}Building $service_name...${NC}"
-    ./gradlew clean build -x test
+    # Run gradle build with --no-daemon to avoid any daemon issues
+    ./gradlew build --no-daemon -x test
     if [ $? -ne 0 ]; then
         echo -e "${RED}Failed to build $service_name${NC}"
         cd ..
@@ -74,7 +80,8 @@ start_service() {
     fi
     
     echo -e "${YELLOW}Starting $service_name with JAR: $JAR_PATH${NC}"
-    nohup java -jar "$JAR_PATH" > ../logs/$service_name.log 2>&1 &
+    # Run the JAR with explicit memory settings
+    nohup java -Xmx512m -jar "$JAR_PATH" > ../logs/$service_name.log 2>&1 &
     echo $! > ../logs/$service_name.pid
     cd ..
     
