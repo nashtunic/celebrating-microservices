@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/api/v1/search")
@@ -33,7 +35,8 @@ public class SearchController {
         }
         
         return ResponseEntity.ok(
-            new ArrayList<>(searchRepository.findAll())
+            StreamSupport.stream(searchRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList())
         );
     }
 
@@ -59,6 +62,7 @@ public class SearchController {
 
     @GetMapping("/all")
     public List<SearchablePost> getAllPosts() {
-        return new ArrayList<>(searchRepository.findAll());
+        return StreamSupport.stream(searchRepository.findAll().spliterator(), false)
+            .collect(Collectors.toList());
     }
 } 
