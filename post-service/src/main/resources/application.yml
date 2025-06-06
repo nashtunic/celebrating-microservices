@@ -4,9 +4,9 @@ spring:
   config:
     import: "optional:configserver:"
   r2dbc:
-    url: r2dbc:mysql://localhost:3306/celebrating
-    username: root
-    password: root
+    url: r2dbc:postgresql://41.89.64.12:5432/celebratedb
+    username: celebrate
+    password: celebrate123
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
@@ -17,12 +17,12 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://41.89.64.12:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: localhost
+    hostname: 41.89.64.12
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
 
