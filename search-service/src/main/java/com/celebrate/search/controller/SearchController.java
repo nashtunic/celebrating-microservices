@@ -5,6 +5,7 @@ import com.celebrate.search.repository.PostSearchRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/v1/search")
@@ -54,5 +55,10 @@ public class SearchController {
     public ResponseEntity<Void> deletePost(@PathVariable String id) {
         searchRepository.deleteById(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/all")
+    public List<SearchablePost> getAllPosts() {
+        return new ArrayList<>(searchRepository.findAll());
     }
 } 
