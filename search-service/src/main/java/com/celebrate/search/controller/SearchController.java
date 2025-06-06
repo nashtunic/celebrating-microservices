@@ -33,7 +33,7 @@ public class SearchController {
         }
         
         return ResponseEntity.ok(
-            List.copyOf(searchRepository.findAll())
+            new ArrayList<>(searchRepository.findAll())
         );
     }
 
