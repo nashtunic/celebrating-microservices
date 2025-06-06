@@ -2,7 +2,7 @@ spring:
   application:
     name: post-service
   config:
-    import: "optional:configserver:"
+    import: "optional:configserver:http://41.89.64.12:8888"
   r2dbc:
     url: r2dbc:postgresql://41.89.64.12:5432/celebratedb
     username: celebrate
@@ -33,4 +33,4 @@ management:
         include: "*"
   endpoint:
     health:
-      show-details: always 
+      show-details: always
