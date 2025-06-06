@@ -52,7 +52,8 @@ start_service() {
         return 1
     fi
     
-    nohup java -jar build/libs/*.jar > ../logs/$service_name.log 2>&1 &
+   
+    nohup java -jar build/libs/$service_name-*.jar > ../logs/$service_name.log 2>&1 &
     echo $! > ../logs/$service_name.pid
     cd ..
     
