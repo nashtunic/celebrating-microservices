@@ -42,6 +42,22 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+springBoot {
+    mainClass = 'com.celebrating.auth.AuthServiceApplication'
+}
+
+bootJar {
+    enabled = true
+    archiveClassifier = ''
+    manifest {
+        attributes 'Start-Class': 'com.celebrating.auth.AuthServiceApplication'
+    }
+}
+
+jar {
+    enabled = false
+}
+
 bootRun {
     mainClass = 'com.celebrating.auth.AuthServiceApplication'
 }
