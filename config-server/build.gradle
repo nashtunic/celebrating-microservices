@@ -33,9 +33,16 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+springBoot {
+    mainClass = 'com.celebrating.config.ConfigServerApplication'
+}
+
 bootJar {
     enabled = true
     archiveClassifier = ''
+    manifest {
+        attributes 'Start-Class': 'com.celebrating.config.ConfigServerApplication'
+    }
 }
 
 jar {
