@@ -36,6 +36,9 @@ tasks.named('test') {
 bootJar {
     enabled = true
     archiveClassifier = ''
+    manifest {
+        attributes 'Main-Class': 'org.springframework.boot.loader.launch.Main'
+    }
 }
 
 jar {
