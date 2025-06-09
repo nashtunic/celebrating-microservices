@@ -20,13 +20,20 @@ public class DatabaseConfig {
     @Primary
     @ConfigurationProperties("spring.datasource")
     public DataSourceProperties dataSourceProperties() {
-        return new DataSourceProperties();
+        DataSourceProperties properties = new DataSourceProperties();
+        properties.setDriverClassName("org.postgresql.Driver");
+        return properties;
     }
 
     @Bean
     @Primary
     @ConfigurationProperties("spring.datasource.hikari")
     public DataSource dataSource(DataSourceProperties properties) {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("PostgreSQL driver not found", e);
+        }
         return properties.initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
                 .build();
