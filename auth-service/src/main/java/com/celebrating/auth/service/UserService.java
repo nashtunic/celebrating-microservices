@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class UserService {
     @Autowired
     private UserRepository userRepository;
@@ -16,24 +15,45 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User registerUser(User user) {
-        // Check if username or email already exists
-        if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) {
+    @Transactional
+    public User createUser(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
-        if (userRepository.existsByEmailIgnoreCase(user.getEmail())) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
-
-        // Encode password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // Save user
         return userRepository.save(user);
     }
 
-    public User findByUsernameOrEmail(String identifier) {
-        return userRepository.findByUsernameIgnoreCaseOrEmailIgnoreCase(identifier, identifier)
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public User getUserByUsernameOrEmail(String identifier) {
+        return userRepository.findByUsername(identifier)
+                .orElseGet(() -> userRepository.findByEmail(identifier)
+                        .orElseThrow(() -> new RuntimeException("User not found")));
+    }
+
+    @Transactional
+    public User updateUser(Long id, User userDetails) {
+        User user = getUserById(id);
+        user.setFullName(userDetails.getFullName());
+        user.setEmail(userDetails.getEmail());
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        }
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("User not found");
+        }
+        userRepository.deleteById(id);
     }
 } 
