@@ -1,48 +1,73 @@
+server:
+  port: 9000
+  servlet:
+    context-path: /
+
 spring:
   application:
     name: auth-service
   config:
-    import: "configserver:"
+    import: "optional:configserver:http://41.89.64.12:8888"
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
   datasource:
-    url: jdbc:postgresql://localhost:5432/celebratedb
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://41.89.64.12:5432/celebratedb
+    username: celebrate
+    password: celebrate123
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 10
-      minimum-idle: 5
-      idle-timeout: 300000
+      maximum-pool-size: 5
+      minimum-idle: 2
+      idle-timeout: 600000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+      auto-commit: true
+      pool-name: CelebrateHikariPool
+      validation-timeout: 5000
+      leak-detection-threshold: 60000
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-        jdbc:
-          time_zone: UTC
+        connection:
+          characterEncoding: utf8
+          useUnicode: true
+          CharSet: utf8
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      continue-on-error: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://41.89.64.12:9000
+          jwk-set-uri: http://41.89.64.12:9000/.well-known/jwks.json
 
-server:
-  port: 8081
-  servlet:
-    context-path: /
+jwt:
+  secret: 8y/B?E(H+MbQeThWmZq4t6w9z$C&F)J@NcRfUjXn2r5u8x/A%D*G-KaPdSgVkYp3
+  expiration: 86400000 # 24 hours in milliseconds
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://41.89.64.12:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
-    preferIpAddress: true
-    hostname: localhost
+    prefer-ip-address: true
+    hostname: 41.89.64.12
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
-
-jwt:
-  secret: your-secret-key-must-be-at-least-32-characters-long-and-very-secure-123
-  expiration: 86400000 # 24 hours
 
 logging:
   level:
@@ -50,16 +75,5 @@ logging:
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    com.celebrating.auth: DEBUG
-
-cors:
-  allowed-origins: 
-    - "http://localhost:*"
-    - "http://127.0.0.1:*"
-  allowed-methods: GET,POST,PUT,DELETE,OPTIONS,HEAD
-  allowed-headers: "*"
-  exposed-headers: 
-    - "Authorization"
-    - "Content-Type"
-  allow-credentials: true
-  max-age: 3600
+    org.postgresql: DEBUG
+    com.zaxxer.hikari: DEBUG 
