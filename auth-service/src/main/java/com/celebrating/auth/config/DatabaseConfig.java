@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 import javax.sql.DataSource;
 
@@ -34,8 +36,10 @@ public class DatabaseConfig {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("PostgreSQL driver not found", e);
         }
-        return properties.initializeDataSourceBuilder()
+        HikariDataSource dataSource = properties.initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
                 .build();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        return dataSource;
     }
 } 
