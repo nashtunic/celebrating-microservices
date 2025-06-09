@@ -8,10 +8,6 @@ spring:
     name: auth-service
   config:
     import: "optional:configserver:http://41.89.64.12:8888"
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
   datasource:
     url: jdbc:postgresql://41.89.64.12:5432/celebratedb
     username: celebrate
