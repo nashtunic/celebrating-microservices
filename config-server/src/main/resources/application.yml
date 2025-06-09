@@ -8,12 +8,23 @@ spring:
     config:
       server:
         git:
-          uri: file:///C:/Users/User/Documents/springprojects/celebrating-microservices-main/config-repo
+          uri: ${CONFIG_REPO_PATH:/opt/celebrating-microservices/config-repo}
           clone-on-start: true
-          default-label: master
+          default-label: main
+          search-paths: '{application}'
+          basedir: /tmp/config-repo
+          timeout: 10
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*" 
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.config: DEBUG
+    org.springframework.boot: INFO 
