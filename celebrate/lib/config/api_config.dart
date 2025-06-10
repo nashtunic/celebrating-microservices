@@ -1,16 +1,12 @@
 import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
 
 class ApiConfig {
-  static const String _localBaseUrl = 'http://localhost:8080';
-  static const String _prodBaseUrl =
-      'http://localhost:8080'; // Update with your production URL
+  static const String serverIP = '197.254.53.252';
+  static const int apiGatewayPort = 2323;
 
-  static String get baseUrl {
-    if (kReleaseMode) {
-      return _prodBaseUrl;
-    }
-    return _localBaseUrl;
-  }
+  // Base URLs
+  static const String baseUrl = 'http://$serverIP:$apiGatewayPort';
+  static const String wsBaseUrl = 'ws://$serverIP:$apiGatewayPort';
 
   // API Endpoints
   static const String auth = '/api/auth';
@@ -21,6 +17,8 @@ class ApiConfig {
   static const String search = '/api/search';
   static const String awards = '/api/awards';
   static const String ratings = '/api/ratings';
+  static const String newsFeed = '/api/news-feed';
+  static const String moderation = '/api/moderation';
 
   // Timeouts
   static const Duration connectionTimeout = Duration(seconds: 30);
@@ -30,11 +28,16 @@ class ApiConfig {
   static Map<String, String> get defaultHeaders => {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers':
+            'Origin, Content-Type, Accept, Authorization',
       };
 
   // Auth endpoints
   static const String login = '/api/auth/login';
   static const String register = '/api/auth/register';
+  static const String refreshToken = '/api/auth/refresh';
 
   // User endpoints
   static const String userProfile = '/api/users/profile';
@@ -50,5 +53,18 @@ class ApiConfig {
   // Messaging endpoints
   static const String getChats = '/api/messages/chats';
   static const String getChatMessages = '/api/messages/chat';
-  static const String wsEndpoint = 'ws://localhost:8080/ws/chat';
+  static const String wsEndpoint = 'ws://$serverIP/ws/chat';
+
+  // Notification endpoints
+  static const String getNotifications = '/api/notifications';
+  static const String wsNotificationsEndpoint =
+      'ws://$serverIP/ws/notifications';
+
+  // News Feed endpoints
+  static const String getNewsFeed = '/api/news-feed';
+  static const String getTrending = '/api/news-feed/trending';
+
+  // Moderation endpoints
+  static const String reportContent = '/api/moderation/report';
+  static const String getReports = '/api/moderation/reports';
 }
