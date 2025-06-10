@@ -1,30 +1,16 @@
 server:
   port: 8888
-
 spring:
   application:
     name: config-server
   cloud:
     config:
       server:
-        git:
-          uri: ${CONFIG_REPO_PATH:/opt/celebrating-microservices/config-repo}
-          clone-on-start: true
-          default-label: main
-          search-paths: '{application}'
-          basedir: /tmp/config-repo
-          timeout: 10
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
-
+        native:
+          search-locations: file:///home/francis/celebrating-microservices/config-repo
+  profiles:
+    active: native
 logging:
   level:
     org.springframework.cloud.config: DEBUG
-    org.springframework.boot: INFO 
+    org.springframework.boot.context.config: DEBUG
