@@ -151,6 +151,8 @@ The mobile application is built using Flutter and provides:
 ./setup_database.sh   # Linux/Mac
 ```
 
+**Note on PostgreSQL SSL:** If you encounter connection issues related to SSL, ensure that your PostgreSQL client (e.g., Spring Boot application) is configured to explicitly disable SSL (e.g., by adding `?sslmode=disable` to the JDBC URL in `application.yml` and `config-repo/application.yml`).
+
 The script will:
 - Create the celebratedb database
 - Set up all necessary tables
@@ -201,6 +203,26 @@ The system uses a single database (celebratedb) with the following key tables:
    - Direct communication
    - Chat history
    - Message status
+
+## Project Setup and Maintenance
+
+To ensure all services have the necessary Gradle wrapper files and are up-to-date with the repository, use the following scripts:
+
+1.  **Setup Gradle Wrappers for All Services (`setup_gradle_wrappers.sh`)**
+
+    This script cleans up existing Gradle wrapper files, downloads `gradlew` and `gradle-wrapper.properties` from the repository, and then runs `gradle wrapper` for each service to generate the `gradle-wrapper.jar`.
+
+    ```bash
+    ./setup_gradle_wrappers.sh
+    ```
+
+2.  **Update Repository and Setup Gradle (`update_from_github.sh`)**
+
+    This script fetches the latest changes from the GitHub repository, resets your local branch to match the remote, cleans untracked files, and then runs the `setup_gradle_wrappers.sh` script to ensure all Gradle files are correctly set up.
+
+    ```bash
+    ./update_from_github.sh
+    ```
 
 ## Service Startup
 
