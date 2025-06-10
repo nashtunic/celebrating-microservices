@@ -26,7 +26,9 @@ public class DatabaseConfig {
     @Primary
     @ConfigurationProperties("spring.datasource")
     public DataSourceProperties dataSourceProperties() {
-        return new DataSourceProperties();
+        DataSourceProperties properties = new DataSourceProperties();
+        properties.setDriverClassName("org.postgresql.Driver");
+        return properties;
     }
 
     @Bean
