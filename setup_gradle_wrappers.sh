@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# GitHub repository raw URL
+GITHUB_REPO_RAW_URL="https://raw.githubusercontent.com/nashtunic/celebrating-microservices/main"
+
 # Array of service directories
 SERVICE_DIRS=(
     "api-gateway"
@@ -31,33 +34,26 @@ for service_dir in "${SERVICE_DIRS[@]}"; do
         rm -rf .gradle gradle/wrapper
         mkdir -p gradle/wrapper
         
-        # Ensure gradlew script is present
-        if [ ! -f "gradlew" ]; then
-            echo "gradlew script not found, downloading from original repository..."
-            wget "${GITHUB_REPO_RAW_URL}/${service_dir}/gradlew" -O gradlew
-            if [ $? -ne 0 ]; then
-                echo "Error: Failed to download gradlew for $service_dir."
-                cd "$CURRENT_DIR"
-                continue
-            fi
+        # Download gradlew script
+        echo "Downloading gradlew script..."
+        wget "${GITHUB_REPO_RAW_URL}/${service_dir}/gradlew" -O gradlew
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to download gradlew for $service_dir."
+            cd "$CURRENT_DIR"
+            continue
         fi
-        chmod +x gradlew # Ensure it's executable
+        chmod +x gradlew
 
-        # Ensure gradle/wrapper directory exists and gradle-wrapper.properties is present
-        mkdir -p gradle/wrapper # Create directory if it doesn't exist
-
-        if [ ! -f "gradle/wrapper/gradle-wrapper.properties" ]; then
-            echo "gradle-wrapper.properties not found, downloading from original repository..."
-            wget "${GITHUB_REPO_RAW_URL}/${service_dir}/gradle/wrapper/gradle-wrapper.properties" -O gradle/wrapper/gradle-wrapper.properties
-            if [ $? -ne 0 ]; then
-                echo "Error: Failed to download gradle-wrapper.properties for $service_dir."
-                cd "$CURRENT_DIR"
-                continue
-            fi
+        # Download gradle-wrapper.properties
+        echo "Downloading gradle-wrapper.properties..."
+        wget "${GITHUB_REPO_RAW_URL}/${service_dir}/gradle/wrapper/gradle-wrapper.properties" -O gradle/wrapper/gradle-wrapper.properties
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to download gradle-wrapper.properties for $service_dir."
+            cd "$CURRENT_DIR"
+            continue
         fi
 
-        echo "Running ./gradlew wrapper to ensure full Gradle wrapper setup (will download gradle-wrapper.jar)..."
-        # This command should download the full distribution and extract gradle-wrapper.jar
+        echo "Running ./gradlew wrapper to ensure full Gradle wrapper setup..."
         ./gradlew wrapper
         if [ $? -ne 0 ]; then
             echo "Failed to set up Gradle wrapper for $service_dir."
