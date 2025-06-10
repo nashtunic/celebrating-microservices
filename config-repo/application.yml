@@ -41,9 +41,6 @@ management:
     health:
       show-details: always
 
-server:
-  port: ${server.port:8080}
-
 logging:
   level:
     org.springframework.web: INFO
