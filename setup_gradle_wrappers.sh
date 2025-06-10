@@ -53,23 +53,16 @@ for service_dir in "${SERVICE_DIRS[@]}"; do
             continue
         fi
 
-        # Download gradle-wrapper.jar
-        echo "Downloading gradle-wrapper.jar..."
-        wget "${GITHUB_REPO_RAW_URL}/${service_dir}/gradle/wrapper/gradle-wrapper.jar" -O gradle/wrapper/gradle-wrapper.jar
+        # Generate gradle-wrapper.jar using gradle wrapper command
+        echo "Generating gradle-wrapper.jar..."
+        gradle wrapper
         if [ $? -ne 0 ]; then
-            echo "Error: Failed to download gradle-wrapper.jar for $service_dir."
+            echo "Error: Failed to generate gradle-wrapper.jar for $service_dir."
             cd "$CURRENT_DIR"
             continue
         fi
 
-        echo "Running ./gradlew wrapper to ensure full Gradle wrapper setup..."
-        ./gradlew wrapper
-        if [ $? -ne 0 ]; then
-            echo "Failed to set up Gradle wrapper for $service_dir."
-        else
-            echo "Gradle wrapper set up successfully for $service_dir."
-        fi
-        
+        echo "Gradle wrapper set up successfully for $service_dir."
         cd "$CURRENT_DIR"
     else
         echo "Directory $service_dir not found, skipping."
