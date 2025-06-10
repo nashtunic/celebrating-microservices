@@ -29,6 +29,7 @@ for service_dir in "${SERVICE_DIRS[@]}"; do
         
         echo "Cleaning up existing Gradle wrapper files..."
         rm -rf .gradle gradle/wrapper
+        mkdir -p gradle/wrapper
         
         echo "Running ./gradlew wrapper to regenerate Gradle files..."
         # Check if gradlew script exists, if not, download it
@@ -40,6 +41,20 @@ for service_dir in "${SERVICE_DIRS[@]}"; do
         # Ensure gradlew is executable
         chmod +x gradlew
 
+        # Get Gradle distribution URL from properties file
+        GRADLE_PROPERTIES="gradle/wrapper/gradle-wrapper.properties"
+        if [ ! -f "$GRADLE_PROPERTIES" ]; then
+            echo "gradle-wrapper.properties not found, downloading default..."
+            wget https://raw.githubusercontent.com/gradle/gradle/master/gradle/wrapper/gradle-wrapper.properties -O "$GRADLE_PROPERTIES"
+        fi
+
+        DISTRIBUTION_URL=$(grep "distributionUrl" "$GRADLE_PROPERTIES" | cut -d= -f2 | sed 's/\\//g')
+        GRADLE_VERSION=$(echo "$DISTRIBUTION_URL" | grep -o 'gradle-[0-9.]*' | cut -d- -f2)
+        GRADLE_WRAPPER_JAR_URL="https://services.gradle.org/distributions/gradle-$GRADLE_VERSION/gradle-$GRADLE_VERSION/lib/gradle-wrapper.jar"
+
+        echo "Downloading gradle-wrapper.jar from $GRADLE_WRAPPER_JAR_URL..."
+        wget "$GRADLE_WRAPPER_JAR_URL" -O gradle/wrapper/gradle-wrapper.jar
+        
         # Run gradlew wrapper to ensure proper setup and download of gradle-wrapper.jar
         ./gradlew wrapper
         
