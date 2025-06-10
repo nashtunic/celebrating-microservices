@@ -4,7 +4,7 @@ spring:
   config:
     import: "configserver:"
   datasource:
-    url: jdbc:postgresql://localhost:5432/celebratedb
+    url: jdbc:postgresql://localhost:5432/celebratedb?sslmode=disable
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
