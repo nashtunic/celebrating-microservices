@@ -51,17 +51,19 @@ fi
 
 echo "Attempting to stop $SERVICE_NAME (port: $PORT)..."
 
-# Find the PID listening on the port and kill it
-PID=$(sudo lsof -t -i:"$PORT")
+# Find all PIDs listening on the port and kill them
+PIDS=$(sudo lsof -t -i:"$PORT")
 
-if [ -z "$PID" ]; then
+if [ -z "$PIDS" ]; then
     echo "No process found running on port $PORT for $SERVICE_NAME."
 else
-    echo "Found process with PID $PID on port $PORT. Killing process..."
-    sudo kill -9 "$PID"
-    if [ $? -eq 0 ]; then
-        echo "$SERVICE_NAME (PID $PID) stopped successfully."
-    else
-        echo "Error: Failed to stop $SERVICE_NAME (PID $PID)."
-    fi
+    echo "Found processes with PIDs: $PIDS on port $PORT. Killing processes..."
+    for PID in $PIDS; do
+        sudo kill -9 "$PID"
+        if [ $? -eq 0 ]; then
+            echo "$SERVICE_NAME (PID $PID) stopped successfully."
+        else
+            echo "Error: Failed to stop $SERVICE_NAME (PID $PID)."
+        fi
+    done
 fi 
