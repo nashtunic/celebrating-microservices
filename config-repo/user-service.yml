@@ -5,17 +5,17 @@ spring:
   application:
     name: user-service
   datasource:
-    url: jdbc:mysql://localhost:3306/celebrating_db
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:postgresql://197.254.53.252:5432/celebratedb?sslmode=disable
+    username: celebrate
+    password: celebrate123
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
 logging:
@@ -28,9 +28,10 @@ logging:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://197.254.53.252:8761/eureka/
   instance:
     prefer-ip-address: true
+    hostname: 197.254.53.252
 
 management:
   endpoints:
