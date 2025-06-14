@@ -2,11 +2,11 @@ spring:
   application:
     name: rating-review-service
   config:
-    import: "optional:configserver:http://localhost:8888/"
+    import: "optional:configserver:http://197.254.53.252:8888/"
   datasource:
-    url: jdbc:postgresql://localhost:5432/celebrating
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://197.254.53.252:5432/celebratedb
+    username: celebrate
+    password: celebrate123
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,15 +18,15 @@ spring:
 server:
   port: 8090
 
-eureka:
+eureka:?:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://197.254.53.252:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: localhost
+    hostname: 197.254.53.252
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
 
