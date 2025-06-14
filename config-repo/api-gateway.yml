@@ -55,9 +55,10 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://197.254.53.252:8761/eureka/
   instance:
     prefer-ip-address: true
+    hostname: 197.254.53.252
 
 management:
   endpoints:
