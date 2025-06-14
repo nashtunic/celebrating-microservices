@@ -2,11 +2,11 @@ spring:
   application:
     name: analytics-logging-service
   config:
-    import: "configserver:"
+    import: "optional:configserver:http://197.254.53.252:8888/"
   datasource:
-    url: jdbc:postgresql://localhost:5432/celebrating
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://197.254.53.252:5432/celebratedb
+    username: celebrate
+    password: celebrate123
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,7 +16,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   data:
     mongodb:
-      host: localhost
+      host: 197.254.53.252
       port: 27017
       database: celebrate_analytics
       username: celebrate_user
@@ -27,12 +27,15 @@ spring:
     caffeine:
       spec: maximumSize=1000,expireAfterWrite=1h
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: 197.254.53.252:9092
     consumer:
       group-id: analytics-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 server:
   port: 8088
@@ -40,12 +43,12 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://197.254.53.252:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: localhost
+    hostname: 197.254.53.252
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
 
