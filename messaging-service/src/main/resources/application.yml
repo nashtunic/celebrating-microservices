@@ -2,12 +2,15 @@ spring:
   application:
     name: messaging-service
   config:
-    import: "optional:configserver:"
+    import: "optional:configserver:http://197.254.53.252:8888/"
   r2dbc:
-    url: r2dbc:postgresql://41.89.64.12:5432/celebratedb
+    url: r2dbc:postgresql://197.254.53.252:5432/celebratedb
     username: celebrate
     password: celebrate123
   liquibase:
+    url: jdbc:postgresql://197.254.53.252:5432/celebratedb
+    user: celebrate
+    password: celebrate123
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
 
@@ -17,12 +20,12 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://41.89.64.12:8761/eureka/
+      defaultZone: http://197.254.53.252:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: 41.89.64.12
+    hostname: 197.254.53.252
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
 
