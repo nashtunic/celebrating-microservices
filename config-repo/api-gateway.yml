@@ -12,10 +12,16 @@ spring:
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/api/v1/auth/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/(?<segment>.*), /$\{segment}
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/v1/users/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/(?<segment>.*), /$\{segment}
         - id: post-service
           uri: lb://POST-SERVICE
           predicates:
@@ -50,7 +56,13 @@ spring:
             - Path=/api/v1/analytics/**, /api/v1/logs/**
 
 server:
-  port: 8080
+  port: 8443
+  ssl:
+    enabled: true
+    key-store: /opt/celebrating-microservices/ssl/api-gateway.p12
+    key-store-password: celebrate123
+    key-store-type: PKCS12
+    key-alias: api-gateway
 
 eureka:
   client:
@@ -59,6 +71,9 @@ eureka:
   instance:
     prefer-ip-address: true
     hostname: 197.254.53.252
+    secure-port-enabled: true
+    non-secure-port-enabled: false
+    secure-port: ${server.port}
 
 management:
   endpoints:
