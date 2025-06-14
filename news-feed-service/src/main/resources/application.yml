@@ -2,16 +2,16 @@ spring:
   application:
     name: news-feed-service
   config:
-    import: "optional:configserver:"
+    import: "optional:configserver:http://197.254.53.252:8888"
   datasource:
-    url: jdbc:postgresql://localhost:5432/celebrate_news_feed
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://197.254.53.252:5432/celebratedb
+    username: celebrate
+    password: celebrate123
     driver-class-name: org.postgresql.Driver
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/celebrate_news_feed
-    username: postgres
-    password: postgres
+    url: r2dbc:postgresql://197.254.53.252:5432/celebratedb
+    username: celebrate
+    password: celebrate123
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,6 +21,9 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
+    url: jdbc:postgresql://197.254.53.252:5432/celebratedb
+    user: celebrate
+    password: celebrate123
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
 
@@ -30,12 +33,12 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://197.254.53.252:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: localhost
+    hostname: 197.254.53.252
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
 
