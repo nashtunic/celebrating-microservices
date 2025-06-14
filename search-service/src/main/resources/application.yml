@@ -2,10 +2,13 @@ spring:
   application:
     name: search-service
   config:
-    import: "optional:configserver:http://localhost:8888/"
+    import: "optional:configserver:http://197.254.53.252:8888"
   elasticsearch:
-    uris: http://localhost:9200
+    uris: http://197.254.53.252:9200
   liquibase:
+    url: jdbc:postgresql://197.254.53.252:5432/celebratedb
+    user: celebrate
+    password: celebrate123
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
 
@@ -15,11 +18,12 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://197.254.53.252:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
+    hostname: 197.254.53.252
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
 
