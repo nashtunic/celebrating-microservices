@@ -2,7 +2,7 @@ spring:
   application:
     name: default-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/celebratedb?sslmode=disable
+    url: jdbc:postgresql://197.254.53.252:5432/celebratedb?sslmode=disable
     username: celebrate
     password: celebrate123
     driver-class-name: org.postgresql.Driver
@@ -25,12 +25,12 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://197.254.53.252:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: localhost
+    hostname: 197.254.53.252
 
 management:
   endpoints:
