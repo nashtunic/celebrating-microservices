@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import java.time.LocalDateTime;
 
 @Document(indexName = "posts")
 public class SearchablePost {
@@ -24,7 +25,7 @@ public class SearchablePost {
     private String category;
 
     @Field(type = FieldType.Date)
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     // Getters and Setters
     public String getId() {
@@ -67,11 +68,11 @@ public class SearchablePost {
         this.category = category;
     }
 
-    public String getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 } 
