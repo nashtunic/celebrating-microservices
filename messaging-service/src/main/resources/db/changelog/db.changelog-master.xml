@@ -3,15 +3,17 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
-    <changeSet id="1" author="celebrating">
+    <include file="db/changelog/changes/001-create-chats-table.xml"/>
+
+    <changeSet id="2" author="celebrating">
         <createTable tableName="messages">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="chat_id" type="bigint">
-                <constraints nullable="false"/>
+                <constraints nullable="false" foreignKeyName="fk_messages_chat_id" references="chats(id)"/>
             </column>
             <column name="sender_id" type="bigint">
                 <constraints nullable="false"/>
