@@ -1,15 +1,13 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: api-gateway
+  config:
+    import: "optional:configserver:"
   cloud:
     gateway:
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedMethods: "*"
-            allowedHeaders: "*"
-            allowCredentials: true
       discovery:
         locator:
           enabled: true
@@ -19,41 +17,30 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/api/auth/**
+          filters:
+            - RewritePath=/api/auth/(?<segment>.*), /${segment}
+            - AddRequestHeader=X-Forwarded-Prefix, /api/auth
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/api/users/**
+          filters:
+            - RewritePath=/api/users/(?<segment>.*), /${segment}
+            - AddRequestHeader=X-Forwarded-Prefix, /api/users
         - id: post-service
           uri: lb://post-service
           predicates:
             - Path=/api/posts/**
+          filters:
+            - RewritePath=/api/posts/(?<segment>.*), /${segment}
+            - AddRequestHeader=X-Forwarded-Prefix, /api/posts
         - id: messaging-service
           uri: lb://messaging-service
           predicates:
             - Path=/api/messages/**
-        - id: notification-service
-          uri: lb://notification-service
-          predicates:
-            - Path=/api/notifications/**
-        - id: news-feed-service
-          uri: lb://news-feed-service
-          predicates:
-            - Path=/api/news-feed/**
-        - id: moderation-service
-          uri: lb://moderation-service
-          predicates:
-            - Path=/api/moderation/**
-        - id: search-service
-          uri: lb://search-service
-          predicates:
-            - Path=/api/search/**
-        - id: award-service
-          uri: lb://award-service
-          predicates:
-            - Path=/api/awards/**
-
-server:
-  port: 8080
+          filters:
+            - RewritePath=/api/messages/(?<segment>.*), /${segment}
+            - AddRequestHeader=X-Forwarded-Prefix, /api/messages
 
 eureka:
   client:
@@ -63,7 +50,7 @@ eureka:
     register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: 41.89.64.12
+    hostname: localhost
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
 
@@ -82,4 +69,4 @@ logging:
     org.springframework.http.server.reactive: DEBUG
     org.springframework.web.reactive: DEBUG
     reactor.netty: DEBUG
-    io.netty: DEBUG 
+    io.netty: DEBUG
