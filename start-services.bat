@@ -1,55 +1,114 @@
 @echo off
 echo Starting Microservices...
 
+REM Set base directory
+set BASE_DIR=%~dp0
+
+REM Create logs directory if it doesn't exist
+if not exist "%BASE_DIR%\logs" mkdir "%BASE_DIR%\logs"
+
 echo Starting Service Registry (Eureka)...
-start "Service Registry" cmd /c "cd service-registry; .\gradlew bootRun"
-timeout /t 30
-
-
+cd "%BASE_DIR%\service-registry"
+start "Service Registry" cmd /c "gradlew bootRun > ..\logs\service-registry.log 2>&1"
+timeout /t 30 /nobreak
+cd "%BASE_DIR%"
 
 echo Starting Config Server...
-cd %BASE_DIR%\config-server
-start "Config Server" cmd /k ".\gradlew bootRun"
+cd "%BASE_DIR%\config-server"
+start "Config Server" cmd /c "gradlew bootRun > ..\logs\config-server.log 2>&1"
+timeout /t 20 /nobreak
+cd "%BASE_DIR%"
 
 echo Starting API Gateway...
-start "API Gateway" cmd /c "cd api-gateway; .\gradlew bootRun"
-timeout /t 15
+cd "%BASE_DIR%\api-gateway"
+start "API Gateway" cmd /c "gradlew bootRun > ..\logs\api-gateway.log 2>&1"
+timeout /t 15 /nobreak
+cd "%BASE_DIR%"
 
 echo Starting Auth Service...
-start "Auth Service" cmd /c "cd auth-service; .\gradlew bootRun"
-timeout /t 15
+cd "%BASE_DIR%\auth-service"
+start "Auth Service" cmd /c "gradlew bootRun > ..\logs\auth-service.log 2>&1"
+timeout /t 15 /nobreak
+cd "%BASE_DIR%"
 
 echo Starting User Service...
-start "User Service" cmd /c "cd user-service; .\gradlew bootRun"
-timeout /t 15
+cd "%BASE_DIR%\user-service"
+start "User Service" cmd /c "gradlew bootRun > ..\logs\user-service.log 2>&1"
+timeout /t 15 /nobreak
+cd "%BASE_DIR%"
 
 echo Starting Post Service...
-start "Post Service" cmd /c "cd post-service; .\gradlew bootRun"
-timeout /t 15
+cd "%BASE_DIR%\post-service"
+start "Post Service" cmd /c "gradlew bootRun > ..\logs\post-service.log 2>&1"
+timeout /t 15 /nobreak
+cd "%BASE_DIR%"
 
 echo Starting Messaging Service...
-start "Messaging Service" cmd /c "cd messaging-service; .\gradlew bootRun"
-timeout /t 15
+cd "%BASE_DIR%\messaging-service"
+start "Messaging Service" cmd /c "gradlew bootRun > ..\logs\messaging-service.log 2>&1"
+timeout /t 15 /nobreak
+cd "%BASE_DIR%"
 
 echo Starting Notification Service...
-start "Notification Service" cmd /c "cd notification-service; .\gradlew bootRun"
-timeout /t 15
+cd "%BASE_DIR%\notification-service"
+start "Notification Service" cmd /c "gradlew bootRun > ..\logs\notification-service.log 2>&1"
+timeout /t 15 /nobreak
+cd "%BASE_DIR%"
 
 echo Starting News Feed Service...
-start "News Feed Service" cmd /c "cd news-feed-service; .\gradlew bootRun"
-timeout /t 15
+cd "%BASE_DIR%\news-feed-service"
+start "News Feed Service" cmd /c "gradlew bootRun > ..\logs\news-feed-service.log 2>&1"
+timeout /t 15 /nobreak
+cd "%BASE_DIR%"
 
 echo Starting Search Service...
-start "Search Service" cmd /c "cd search-service; .\gradlew bootRun"
-timeout /t 15
+cd "%BASE_DIR%\search-service"
+start "Search Service" cmd /c "gradlew bootRun > ..\logs\search-service.log 2>&1"
+timeout /t 15 /nobreak
+cd "%BASE_DIR%"
 
 echo Starting Rating Review Service...
-start "Rating Review Service" cmd /c "cd rating-review-service; .\gradlew bootRun"
-timeout /t 15
+cd "%BASE_DIR%\rating-review-service"
+start "Rating Review Service" cmd /c "gradlew bootRun > ..\logs\rating-review-service.log 2>&1"
+timeout /t 15 /nobreak
+cd "%BASE_DIR%"
+
+echo Starting Moderation Service...
+cd "%BASE_DIR%\moderation-service"
+start "Moderation Service" cmd /c "gradlew bootRun > ..\logs\moderation-service.log 2>&1"
+timeout /t 15 /nobreak
+cd "%BASE_DIR%"
 
 echo Starting Award Service...
-start "Award Service" cmd /c "cd award-service; .\gradlew bootRun"
-timeout /t 15
+cd "%BASE_DIR%\award-service"
+start "Award Service" cmd /c "gradlew bootRun > ..\logs\award-service.log 2>&1"
+timeout /t 15 /nobreak
+cd "%BASE_DIR%"
 
-echo All services have been started. Please check individual windows for status.
-pause 
+echo Starting Monitoring Service...
+cd "%BASE_DIR%\monitoring-service"
+start "Monitoring Service" cmd /c "gradlew bootRun > ..\logs\monitoring-service.log 2>&1"
+timeout /t 15 /nobreak
+cd "%BASE_DIR%"
+
+echo.
+echo All services have been started. Service logs can be found in the logs directory.
+echo Service ports:
+echo - Service Registry: 8761
+echo - Config Server: 8888
+echo - API Gateway: 8080
+echo - Auth Service: 8081
+echo - User Service: 8082
+echo - Post Service: 8083
+echo - Messaging Service: 8084
+echo - News Feed Service: 8085
+echo - Moderation Service: 8086
+echo - Notification Service: 8087
+echo - Search Service: 8091
+echo - Rating Review Service: 8090
+echo - Award Service: 8089
+echo - Monitoring Service: 8092
+
+echo.
+echo Press any key to exit...
+pause > nul 

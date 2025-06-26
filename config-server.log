@@ -1,0 +1,63 @@
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :resolveMainClassName UP-TO-DATE
+
+> Task :bootRun
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.3)
+
+2025-05-20T19:39:39.754+03:00  INFO 15108 --- [config-server] [           main] c.c.c.ConfigServerApplication            : Starting ConfigServerApplication using Java 17.0.15 with PID 15108 (C:\Users\User\Documents\springprojects\celebrating-microservices-main\config-server\build\classes\java\main started by User in C:\Users\User\Documents\springprojects\celebrating-microservices-main\config-server)
+2025-05-20T19:39:39.761+03:00  INFO 15108 --- [config-server] [           main] c.c.c.ConfigServerApplication            : No active profile set, falling back to 1 default profile: "default"
+2025-05-20T19:39:42.477+03:00  INFO 15108 --- [config-server] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=6c3a758c-5385-38fd-bf0a-462a0f82369a
+2025-05-20T19:39:43.308+03:00  INFO 15108 --- [config-server] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8888 (http)
+2025-05-20T19:39:43.337+03:00  INFO 15108 --- [config-server] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-05-20T19:39:43.337+03:00  INFO 15108 --- [config-server] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-05-20T19:39:43.504+03:00  INFO 15108 --- [config-server] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-05-20T19:39:43.508+03:00  INFO 15108 --- [config-server] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3645 ms
+2025-05-20T19:39:47.797+03:00  INFO 15108 --- [config-server] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2025-05-20T19:39:47.998+03:00  INFO 15108 --- [config-server] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 15 endpoint(s) beneath base path '/actuator'
+2025-05-20T19:39:48.182+03:00  INFO 15108 --- [config-server] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8888 (http) with context path ''
+2025-05-20T19:39:49.872+03:00  INFO 15108 --- [config-server] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2025-05-20T19:39:49.952+03:00  INFO 15108 --- [config-server] [           main] c.c.c.ConfigServerApplication            : Started ConfigServerApplication in 12.921 seconds (process running for 13.909)
+2025-05-20T19:40:39.603+03:00  INFO 15108 --- [config-server] [nio-8888-exec-3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-20T19:40:39.604+03:00  INFO 15108 --- [config-server] [nio-8888-exec-3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-05-20T19:40:39.610+03:00  INFO 15108 --- [config-server] [nio-8888-exec-3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 6 ms
+2025-05-20T19:40:44.173+03:00  INFO 15108 --- [config-server] [nio-8888-exec-3] .c.s.e.MultipleJGitEnvironmentRepository : Cannot pull from remote null, the working tree is not clean.
+2025-05-20T19:40:44.499+03:00  WARN 15108 --- [config-server] [nio-8888-exec-3] .c.s.e.MultipleJGitEnvironmentRepository : Could not merge remote for master remote: null
+2025-05-20T19:40:44.509+03:00  WARN 15108 --- [config-server] [nio-8888-exec-3] .c.s.e.MultipleJGitEnvironmentRepository : The local repository is dirty or ahead of origin. Resetting it to origin/master.
+2025-05-20T19:40:44.534+03:00  WARN 15108 --- [config-server] [nio-8888-exec-3] .c.s.e.MultipleJGitEnvironmentRepository : Could not reset to remote for master (current ref=refs/remotes/origin/master), remote: null
+2025-05-20T19:40:44.648+03:00  INFO 15108 --- [config-server] [nio-8888-exec-3] o.s.c.c.s.e.NativeEnvironmentRepository  : Adding property source: Config resource 'file [C:\Users\User\Documents\springprojects\celebrating-microservices-main\config-repo\auth-service.yml]' via location 'file:/C:/Users/User/Documents/springprojects/celebrating-microservices-main/config-repo/'
+2025-05-20T19:40:44.650+03:00  INFO 15108 --- [config-server] [nio-8888-exec-3] o.s.c.c.s.e.NativeEnvironmentRepository  : Adding property source: Config resource 'file [C:\Users\User\Documents\springprojects\celebrating-microservices-main\config-repo\application.yml]' via location 'file:/C:/Users/User/Documents/springprojects/celebrating-microservices-main/config-repo/'
+2025-05-20T19:40:46.302+03:00  INFO 15108 --- [config-server] [nio-8888-exec-6] .c.s.e.MultipleJGitEnvironmentRepository : Cannot pull from remote null, the working tree is not clean.
+2025-05-20T19:40:46.343+03:00  WARN 15108 --- [config-server] [nio-8888-exec-6] .c.s.e.MultipleJGitEnvironmentRepository : Could not merge remote for master remote: null
+2025-05-20T19:40:46.361+03:00  WARN 15108 --- [config-server] [nio-8888-exec-6] .c.s.e.MultipleJGitEnvironmentRepository : The local repository is dirty or ahead of origin. Resetting it to origin/master.
+2025-05-20T19:40:46.386+03:00  WARN 15108 --- [config-server] [nio-8888-exec-6] .c.s.e.MultipleJGitEnvironmentRepository : Could not reset to remote for master (current ref=refs/remotes/origin/master), remote: null
+2025-05-20T19:40:46.457+03:00  INFO 15108 --- [config-server] [nio-8888-exec-6] o.s.c.c.s.e.NativeEnvironmentRepository  : Adding property source: Config resource 'file [C:\Users\User\Documents\springprojects\celebrating-microservices-main\config-repo\auth-service.yml]' via location 'file:/C:/Users/User/Documents/springprojects/celebrating-microservices-main/config-repo/'
+2025-05-20T19:40:46.457+03:00  INFO 15108 --- [config-server] [nio-8888-exec-6] o.s.c.c.s.e.NativeEnvironmentRepository  : Adding property source: Config resource 'file [C:\Users\User\Documents\springprojects\celebrating-microservices-main\config-repo\application.yml]' via location 'file:/C:/Users/User/Documents/springprojects/celebrating-microservices-main/config-repo/'
+2025-05-20T19:40:59.607+03:00  INFO 15108 --- [config-server] [nio-8888-exec-2] .c.s.e.MultipleJGitEnvironmentRepository : Cannot pull from remote null, the working tree is not clean.
+2025-05-20T19:40:59.628+03:00  WARN 15108 --- [config-server] [nio-8888-exec-2] .c.s.e.MultipleJGitEnvironmentRepository : Could not merge remote for master remote: null
+2025-05-20T19:40:59.639+03:00  WARN 15108 --- [config-server] [nio-8888-exec-2] .c.s.e.MultipleJGitEnvironmentRepository : The local repository is dirty or ahead of origin. Resetting it to origin/master.
+2025-05-20T19:40:59.644+03:00  WARN 15108 --- [config-server] [nio-8888-exec-2] .c.s.e.MultipleJGitEnvironmentRepository : Could not reset to remote for master (current ref=refs/remotes/origin/master), remote: null
+2025-05-20T19:40:59.669+03:00  INFO 15108 --- [config-server] [nio-8888-exec-2] o.s.c.c.s.e.NativeEnvironmentRepository  : Adding property source: Config resource 'file [C:\Users\User\Documents\springprojects\celebrating-microservices-main\config-repo\application.yml]' via location 'file:/C:/Users/User/Documents/springprojects/celebrating-microservices-main/config-repo/'
+2025-05-20T19:41:16.311+03:00  INFO 15108 --- [config-server] [nio-8888-exec-7] .c.s.e.MultipleJGitEnvironmentRepository : Cannot pull from remote null, the working tree is not clean.
+2025-05-20T19:41:16.332+03:00  WARN 15108 --- [config-server] [nio-8888-exec-7] .c.s.e.MultipleJGitEnvironmentRepository : Could not merge remote for master remote: null
+2025-05-20T19:41:16.337+03:00  WARN 15108 --- [config-server] [nio-8888-exec-7] .c.s.e.MultipleJGitEnvironmentRepository : The local repository is dirty or ahead of origin. Resetting it to origin/master.
+2025-05-20T19:41:16.461+03:00  WARN 15108 --- [config-server] [nio-8888-exec-7] .c.s.e.MultipleJGitEnvironmentRepository : Could not reset to remote for master (current ref=refs/remotes/origin/master), remote: null
+2025-05-20T19:41:16.495+03:00  INFO 15108 --- [config-server] [nio-8888-exec-7] o.s.c.c.s.e.NativeEnvironmentRepository  : Adding property source: Config resource 'file [C:\Users\User\Documents\springprojects\celebrating-microservices-main\config-repo\application.yml]' via location 'file:/C:/Users/User/Documents/springprojects/celebrating-microservices-main/config-repo/'
+2025-05-20T19:41:29.173+03:00  INFO 15108 --- [config-server] [nio-8888-exec-1] .c.s.e.MultipleJGitEnvironmentRepository : Cannot pull from remote null, the working tree is not clean.
+2025-05-20T19:41:29.195+03:00  WARN 15108 --- [config-server] [nio-8888-exec-1] .c.s.e.MultipleJGitEnvironmentRepository : Could not merge remote for master remote: null
+2025-05-20T19:41:29.204+03:00  WARN 15108 --- [config-server] [nio-8888-exec-1] .c.s.e.MultipleJGitEnvironmentRepository : The local repository is dirty or ahead of origin. Resetting it to origin/master.
+2025-05-20T19:41:29.207+03:00  WARN 15108 --- [config-server] [nio-8888-exec-1] .c.s.e.MultipleJGitEnvironmentRepository : Could not reset to remote for master (current ref=refs/remotes/origin/master), remote: null
+2025-05-20T19:41:29.302+03:00  INFO 15108 --- [config-server] [nio-8888-exec-1] o.s.c.c.s.e.NativeEnvironmentRepository  : Adding property source: Config resource 'file [C:\Users\User\Documents\springprojects\celebrating-microservices-main\config-repo\application.yml]' via location 'file:/C:/Users/User/Documents/springprojects/celebrating-microservices-main/config-repo/'
+2025-05-20T19:41:46.725+03:00  INFO 15108 --- [config-server] [nio-8888-exec-8] .c.s.e.MultipleJGitEnvironmentRepository : Cannot pull from remote null, the working tree is not clean.
+2025-05-20T19:41:46.747+03:00  WARN 15108 --- [config-server] [nio-8888-exec-8] .c.s.e.MultipleJGitEnvironmentRepository : Could not merge remote for master remote: null
+2025-05-20T19:41:46.752+03:00  WARN 15108 --- [config-server] [nio-8888-exec-8] .c.s.e.MultipleJGitEnvironmentRepository : The local repository is dirty or ahead of origin. Resetting it to origin/master.
+2025-05-20T19:41:46.756+03:00  WARN 15108 --- [config-server] [nio-8888-exec-8] .c.s.e.MultipleJGitEnvironmentRepository : Could not reset to remote for master (current ref=refs/remotes/origin/master), remote: null
+2025-05-20T19:41:46.778+03:00  INFO 15108 --- [config-server] [nio-8888-exec-8] o.s.c.c.s.e.NativeEnvironmentRepository  : Adding property source: Config resource 'file [C:\Users\User\Documents\springprojects\celebrating-microservices-main\config-repo\application.yml]' via location 'file:/C:/Users/User/Documents/springprojects/celebrating-microservices-main/config-repo/'
