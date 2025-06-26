@@ -1,6 +1,6 @@
 server:
-  port: 8085
-
+  port: 8084
+ 
 spring:
   application:
     name: messaging-service 
