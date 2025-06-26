@@ -8,7 +8,11 @@ group = 'com.celebrating'
 version = '0.0.1-SNAPSHOT'
 
 java {
-sourceCompatibility = '17'
+    sourceCompatibility = '17'
+}
+
+springBoot {
+    mainClass = 'com.celebrate.newsfeed.NewsFeedApplication'
 }
 
 configurations {
