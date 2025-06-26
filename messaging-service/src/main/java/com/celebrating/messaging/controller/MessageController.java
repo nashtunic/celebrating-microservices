@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/messages")
@@ -18,22 +19,35 @@ public class MessageController {
         return messageService.sendMessage(message);
     }
 
-    @GetMapping("/conversation")
-    public Flux<Message> getConversation(
-            @RequestParam Long userId1,
-            @RequestParam Long userId2) {
-        return messageService.getConversation(userId1, userId2);
+    @GetMapping("/chat/{chatId}")
+    public Flux<Message> getChatMessages(@PathVariable Long chatId) {
+        return messageService.getChatMessages(chatId);
     }
 
-    @GetMapping("/unread/{receiverId}")
-    public Flux<Message> getUnreadMessages(@PathVariable Long receiverId) {
-        return messageService.getUnreadMessages(receiverId);
+    @GetMapping("/user/{userId}")
+    public Flux<Message> getUserMessages(@PathVariable Long userId) {
+        return messageService.getUserMessages(userId);
     }
 
-    @PostMapping("/read")
-    public Mono<Void> markConversationAsRead(
-            @RequestParam Long receiverId,
-            @RequestParam Long senderId) {
-        return messageService.markConversationAsRead(receiverId, senderId);
+    @GetMapping("/chat/{chatId}/older")
+    public Flux<Message> getOlderMessages(
+            @PathVariable Long chatId,
+            @RequestParam LocalDateTime timestamp,
+            @RequestParam(defaultValue = "20") int limit) {
+        return messageService.getOlderMessages(chatId, timestamp, limit);
+    }
+
+    @GetMapping("/chat/{chatId}/unread/count")
+    public Mono<Long> getUnreadMessageCount(
+            @PathVariable Long chatId,
+            @RequestParam Long userId) {
+        return messageService.getUnreadMessageCount(chatId, userId);
+    }
+
+    @PostMapping("/chat/{chatId}/read")
+    public Mono<Void> markMessagesAsRead(
+            @PathVariable Long chatId,
+            @RequestParam Long userId) {
+        return messageService.markMessagesAsRead(chatId, userId);
     }
 }
