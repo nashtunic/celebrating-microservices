@@ -5,13 +5,27 @@ spring:
     config:
       enabled: false
     gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
       globalcors:
+        add-to-simple-url-handler-mapping: true
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "*"
-            allowedMethods: "*"
+            allowedOrigins:
+              - "http://localhost:3000"
+              - "http://localhost:8080"
+              - "http://127.0.0.1:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
             allowedHeaders: "*"
+            exposedHeaders:
+              - "Authorization"
             allowCredentials: true
+            maxAge: 3600
       discovery:
         locator:
           enabled: true
@@ -21,18 +35,28 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/api/auth/**
+          filters:
+            - StripPrefix=1
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/api/users/**
+          filters:
+            - StripPrefix=1
         - id: post-service
           uri: lb://post-service
           predicates:
             - Path=/api/posts/**
+          filters:
+            - RewritePath=/api/posts/(?<segment>.*), /${segment}
+            - AddRequestHeader=X-Forwarded-Prefix, /api/posts
         - id: messaging-service
           uri: lb://messaging-service
           predicates:
             - Path=/api/messages/**
+          filters:
+            - RewritePath=/api/messages/(?<segment>.*), /${segment}
+            - AddRequestHeader=X-Forwarded-Prefix, /api/messages
         - id: notification-service
           uri: lb://notification-service
           predicates:
@@ -65,7 +89,7 @@ eureka:
     register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: 41.89.64.12
+    hostname: localhost
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
 
@@ -84,4 +108,6 @@ logging:
     org.springframework.http.server.reactive: DEBUG
     org.springframework.web.reactive: DEBUG
     reactor.netty: DEBUG
-    io.netty: DEBUG 
+    io.netty: DEBUG
+    org.springframework.web.cors: DEBUG
+    reactor.netty.http.client: DEBUG 
