@@ -2,9 +2,9 @@ spring:
   application:
     name: award-service
   config:
-    import: "optional:configserver:http://197.254.53.252:8888"
+    import: "optional:configserver:http://localhost:8888"
   datasource:
-    url: jdbc:postgresql://197.254.53.252:5432/celebratedb
+    url: jdbc:postgresql://localhost:5432/celebratedb
     username: celebrate
     password: celebrate123
     driver-class-name: org.postgresql.Driver
@@ -26,12 +26,12 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://197.254.53.252:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: 197.254.53.252
+    hostname: localhost
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
 
