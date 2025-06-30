@@ -1,7 +1,5 @@
 server:
   port: 8081
-  servlet:
-    context-path: /
 
 spring:
   application:
@@ -14,54 +12,42 @@ spring:
     password: celebrate123
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 5
-      minimum-idle: 2
-      idle-timeout: 600000
-      connection-timeout: 30000
-      max-lifetime: 1800000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
       auto-commit: true
-      pool-name: CelebrateHikariPool
-      validation-timeout: 5000
-      leak-detection-threshold: 60000
+      pool-name: AuthHikariPool
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-        connection:
-          characterEncoding: utf8
-          useUnicode: true
-          CharSet: utf8
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
   sql:
     init:
-      mode: always
-      schema-locations: classpath:schema.sql
-      continue-on-error: false
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8081
-          jwk-set-uri: http://localhost:8081/.well-known/jwks.json
+      mode: never
 
 jwt:
   secret: 8y/B?E(H+MbQeThWmZq4t6w9z$C&F)J@NcRfUjXn2r5u8x/A%D*G-KaPdSgVkYp3
   expiration: 86400000 # 24 hours in milliseconds
+  refresh-token:
+    expiration: 604800000 # 7 days in milliseconds
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://197.254.53.252:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: 197.254.53.252
+    hostname: localhost
     lease-renewal-interval-in-seconds: 30
     lease-expiration-duration-in-seconds: 90
 
@@ -70,6 +56,4 @@ logging:
     org.springframework.security: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.postgresql: DEBUG
-    com.zaxxer.hikari: DEBUG 
+    com.celebrating.auth: DEBUG 

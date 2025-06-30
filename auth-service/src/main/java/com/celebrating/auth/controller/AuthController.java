@@ -3,6 +3,8 @@ package com.celebrating.auth.controller;
 import com.celebrating.auth.entity.User;
 import com.celebrating.auth.service.AuthService;
 import com.celebrating.auth.service.JwtService;
+import com.celebrating.auth.model.LoginRequest;
+import com.celebrating.auth.exception.AuthenticationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +16,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/auth")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"}, allowCredentials = "true")
+@CrossOrigin(origins = {
+    "http://localhost:3000",
+    "http://localhost:8080",
+    "http://127.0.0.1:3000",
+    "http://localhost",
+    "http://localhost:58138",
+    "http://127.0.0.1:58138",
+    "app://celebrate"
+}, allowCredentials = "true")
 public class AuthController {
     @Autowired
     private AuthService authService;
@@ -23,51 +32,94 @@ public class AuthController {
     @Autowired
     private JwtService jwtService;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody User user) {
+    @PostMapping({"/api/auth/login", "/login"})
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
-            User registeredUser = authService.register(user);
-            String token = jwtService.generateToken(registeredUser.getUsername());
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", token);
-            response.put("id", registeredUser.getId());
-            response.put("username", registeredUser.getUsername());
-            response.put("email", registeredUser.getEmail());
-            response.put("role", registeredUser.getRole());
-            response.put("fullName", registeredUser.getFullName());
-            response.put("createdAt", registeredUser.getCreatedAt());
-            response.put("isActive", registeredUser.isActive());
-            
+            String identifier = loginRequest.getEmail() != null ? loginRequest.getEmail() : loginRequest.getUsername();
+            Map<String, Object> response = authService.login(identifier, loginRequest.getPassword());
             return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
+        } catch (AuthenticationException e) {
             Map<String, String> response = new HashMap<>();
             response.put("error", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.status(401).body(response);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "An unexpected error occurred");
+            return ResponseEntity.status(500).body(response);
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody Map<String, String> credentials) {
+    @PostMapping({"/api/auth/register", "/register"})
+    public ResponseEntity<?> register(@Valid @RequestBody User user) {
         try {
-            String token = authService.login(credentials.get("username"), credentials.get("password"));
-            User user = authService.getUserByUsername(credentials.get("username"));
+            if (user.getRole() == null || user.getRole().isEmpty()) {
+                user.setRole("USER");
+            }
             
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", token);
-            response.put("id", user.getId());
-            response.put("username", user.getUsername());
-            response.put("email", user.getEmail());
-            response.put("role", user.getRole());
-            response.put("fullName", user.getFullName());
-            response.put("lastLogin", user.getLastLogin());
-            response.put("isActive", user.isActive());
-            
+            User registeredUser = authService.register(user);
+            Map<String, Object> response = authService.login(registeredUser.getUsername(), user.getPassword());
+            return ResponseEntity.ok(response);
+        } catch (AuthenticationException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(400).body(response);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "An unexpected error occurred");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @PostMapping({"/api/auth/refresh", "/refresh"})
+    public ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String bearerToken) {
+        try {
+            String token = bearerToken.substring(7); // Remove "Bearer " prefix
+            Map<String, Object> response = authService.refreshToken(token);
+            return ResponseEntity.ok(response);
+        } catch (AuthenticationException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(401).body(response);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "An unexpected error occurred");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @PostMapping({"/api/auth/password/reset-request", "/password/reset-request"})
+    public ResponseEntity<?> requestPasswordReset(@RequestParam String email) {
+        try {
+            // TODO: Implement password reset request functionality
+            // This should:
+            // 1. Generate a password reset token
+            // 2. Send an email with the reset link
+            // 3. Store the token with an expiration time
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Password reset instructions have been sent to your email");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();
-            response.put("error", "Invalid username or password");
-            return ResponseEntity.badRequest().body(response);
+            response.put("error", "Failed to process password reset request");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @PostMapping({"/api/auth/password/reset", "/password/reset"})
+    public ResponseEntity<?> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+        try {
+            // TODO: Implement password reset functionality
+            // This should:
+            // 1. Validate the reset token
+            // 2. Update the password if token is valid
+            // 3. Invalidate the token after use
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Password has been reset successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Failed to reset password");
+            return ResponseEntity.status(500).body(response);
         }
     }
 
@@ -79,6 +131,9 @@ public class AuthController {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return ResponseEntity.badRequest().body(errors);
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", "Validation failed");
+        response.put("details", errors);
+        return ResponseEntity.badRequest().body(response);
     }
 } 
