@@ -1,0 +1,26 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.trusted.packages: "*"
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+kafka:
+  topics:
+    user-events: user-events
+    post-events: post-events
+    notification-events: notification-events
+    message-events: message-events
+    feed-events: feed-events
+    rating-events: rating-events
+    award-events: award-events
+    moderation-events: moderation-events
+    monitoring-events: monitoring-events 
