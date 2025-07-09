@@ -1,6 +1,6 @@
 spring:
   application:
-    name: api-gateway
+    name: API-GATEWAY
   cloud:
     config:
       enabled: false
@@ -15,6 +15,10 @@ spring:
               - "http://localhost:3000"
               - "http://localhost:8080"
               - "http://127.0.0.1:3000"
+              - "http://localhost"
+              - "http://localhost:58138"
+              - "http://127.0.0.1:58138"
+              - "app://celebrate"
             allowedMethods:
               - GET
               - POST
@@ -32,31 +36,38 @@ spring:
           lower-case-service-id: true
       routes:
         - id: auth-service
-          uri: lb://auth-service
+          uri: lb://AUTH-SERVICE
           predicates:
             - Path=/api/auth/**
           filters:
-            - StripPrefix=1
+            - PreserveHostHeader
+            - RemoveRequestHeader=Cookie
+            - RemoveRequestHeader=Set-Cookie
+            - RewritePath=/api/auth/(?<segment>.*), /${segment}
         - id: user-service
-          uri: lb://user-service
+          uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/**
           filters:
-            - StripPrefix=1
+            - RewritePath=/api/users/(?<segment>.*), /${segment}
+            - AddRequestHeader=X-Forwarded-Prefix, /api/users
+            - JwtAuthentication
         - id: post-service
-          uri: lb://post-service
+          uri: lb://POST-SERVICE
           predicates:
             - Path=/api/posts/**
           filters:
             - RewritePath=/api/posts/(?<segment>.*), /${segment}
             - AddRequestHeader=X-Forwarded-Prefix, /api/posts
+            - JwtAuthentication
         - id: messaging-service
-          uri: lb://messaging-service
+          uri: lb://MESSAGING-SERVICE
           predicates:
             - Path=/api/messages/**
           filters:
             - RewritePath=/api/messages/(?<segment>.*), /${segment}
             - AddRequestHeader=X-Forwarded-Prefix, /api/messages
+            - JwtAuthentication
         - id: notification-service
           uri: lb://notification-service
           predicates:
@@ -111,3 +122,6 @@ logging:
     io.netty: DEBUG
     org.springframework.web.cors: DEBUG
     reactor.netty.http.client: DEBUG 
+
+jwt:
+  secret: 8y/B?E(H+MbQeThWmZq4t6w9z$C&F)J@NcRfUjXn2r5u8x/A%D*G-KaPdSgVkYp3 
