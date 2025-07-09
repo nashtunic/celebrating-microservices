@@ -1,0 +1,12 @@
+{
+  "eventId": "notification-test-123",
+  "eventType": "NOTIFICATION_CREATED",
+  "userId": "test-user-123",
+  "action": "NOTIFICATION_SENT",
+  "timestamp": "2025-07-05T10:35:00Z",
+  "data": {
+    "type": "WELCOME",
+    "message": "Welcome to Celebrating!",
+    "recipientId": "test-user-123"
+  }
+} 

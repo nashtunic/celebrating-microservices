@@ -26,32 +26,54 @@ function Start-ServiceAndWait {
     Write-Host "$serviceName failed to start within timeout"
 }
 
-# Start Config Server first (port 8888)
-Start-ServiceAndWait -serviceName "config-server" -port 8888
+# Start Kafka and dependencies
+Write-Host "Starting Kafka and dependencies..."
+docker-compose up -d
 
-# Start Eureka Server (port 8761)
-Start-ServiceAndWait -serviceName "eureka-server" -port 8761
+# Wait for Kafka to be ready
+Write-Host "Waiting for Kafka to be ready..."
+Start-Sleep -Seconds 30
 
-# Start Auth Service (port 8081)
-Start-ServiceAndWait -serviceName "auth-service" -port 8081
+# Start Config Server
+Write-Host "Starting Config Server..."
+Start-Process powershell -ArgumentList "cd config-server; ./gradlew bootRun"
+Start-Sleep -Seconds 20
+
+# Start Service Registry
+Write-Host "Starting Service Registry..."
+Start-Process powershell -ArgumentList "cd service-registry; ./gradlew bootRun"
+Start-Sleep -Seconds 20
+
+# Start Auth Service
+Write-Host "Starting Auth Service..."
+Start-Process powershell -ArgumentList "cd auth-service; ./gradlew bootRun"
+Start-Sleep -Seconds 20
+
+# Start API Gateway
+Write-Host "Starting API Gateway..."
+Start-Process powershell -ArgumentList "cd api-gateway; ./gradlew bootRun"
+Start-Sleep -Seconds 20
 
 # Start other services
 $services = @(
-    @{name="api-gateway"; port=8080},
-    @{name="user-service"; port=8082},
-    @{name="post-service"; port=8083},
-    @{name="search-service"; port=8084},
-    @{name="news-feed-service"; port=8085},
-    @{name="messaging-service"; port=8086},
-    @{name="notification-service"; port=8087},
-    @{name="rating-review-service"; port=8088},
-    @{name="moderation-service"; port=8089},
-    @{name="awards-service"; port=8090},
-    @{name="monitoring-service"; port=8091}
+    "user-service",
+    "post-service",
+    "notification-service",
+    "messaging-service",
+    "news-feed-service",
+    "rating-review-service",
+    "award-service",
+    "moderation-service",
+    "monitoring-service"
 )
 
 foreach ($service in $services) {
-    Start-ServiceAndWait -serviceName $service.name -port $service.port
+    Write-Host "Starting $service..."
+    Start-Process powershell -ArgumentList "cd $service; ./gradlew bootRun"
+    Start-Sleep -Seconds 10
 }
 
 Write-Host "All services started!" 
+Write-Host "Kafka UI available at: http://localhost:8090"
+Write-Host "Service Registry UI available at: http://localhost:8761"
+Write-Host "API Gateway available at: http://localhost:8080" 

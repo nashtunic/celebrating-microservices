@@ -1,368 +1,246 @@
 # Celebrating Microservices
 
-A comprehensive celebrity management platform built with microservices architecture and Flutter mobile application.
+A microservices-based application built with Spring Boot and Flutter.
 
-## System Architecture
+## Service Architecture
 
-### Backend Services
+The application consists of the following microservices:
 
-1. **Service Registry (Eureka)** - Port 8761
-   - Service discovery and registration
-   - Health monitoring
-   - Load balancing support
-   - Dashboard: http://localhost:8761
+1. **Config Server** (Port: 8888)
+   - Central configuration management
+   - Git-based configuration repository
 
-2. **Config Server** - Port 8888
-   - Centralized configuration management
-   - Git-based config repository
-   - Dynamic configuration updates
-   - Supports multiple environments
+2. **Service Registry** (Port: 8761)
+   - Eureka Server for service discovery
+   - Dashboard available at http://localhost:8761
 
-3. **API Gateway** - Port 8080
-   - Request routing and load balancing
-   - Global CORS configuration
-   - Authentication and authorization
-   - Rate limiting and circuit breaking
-   - Swagger UI: http://localhost:8080/swagger-ui.html
+3. **API Gateway** (Port: 8080)
+   - Routes all client requests
+   - Handles CORS and security
+   - JWT token validation
+   - Load balancing
 
-4. **Auth Service** - Port 8081
+4. **Auth Service** (Port: 8081)
    - User authentication and authorization
-   - JWT token management
-   - Role-based access control (CELEBRITY/USER)
-   - Password encryption using BCrypt
-   - Secure token storage
+   - JWT token generation and validation
+   - Detailed API Documentation:
+     
+     a. Register New User
+     ```
+     POST /api/auth/register
+     Host: localhost:8080
+     Content-Type: application/json
 
-5. **User Service** - Port 8082
+     {
+       "username": "string",
+       "password": "string",
+       "email": "string",
+       "fullName": "string",
+       "role": "USER"     // Optional, defaults to "USER"
+     }
+
+     Response (200 OK):
+     {
+       "message": "Registration successful",
+       "userId": "number",
+       "username": "string",
+       "email": "string"
+     }
+     ```
+
+     b. User Login
+     ```
+     POST /api/auth/login
+     Host: localhost:8080
+     Content-Type: application/json
+
+     {
+       "username": "string",
+       "password": "string"
+     }
+
+     Response (200 OK):
+     {
+       "token": "string",          // JWT access token
+       "refreshToken": "string",   // JWT refresh token
+       "userId": "number",
+       "username": "string",
+       "role": "string",
+       "lastLogin": "timestamp"
+     }
+     ```
+
+     c. Validate Token
+     ```
+     GET /api/auth/validate
+     Host: localhost:8080
+     Authorization: Bearer {token}
+
+     Response (200 OK):
+     {
+       "valid": true,
+       "username": "string",
+       "role": "string"
+     }
+     ```
+
+     d. Refresh Token
+     ```
+     POST /api/auth/refresh
+     Host: localhost:8080
+     Authorization: Bearer {refresh_token}
+
+     Response (200 OK):
+     {
+       "token": "string",          // New JWT access token
+       "refreshToken": "string"    // New JWT refresh token
+     }
+     ```
+
+   - Important Notes:
+     - Passwords are securely hashed using BCrypt before storage
+     - Registration and login are separate operations
+     - JWT tokens contain user roles and permissions
+     - Token validation is performed at the API Gateway level
+
+5. **User Service** (Port: 8082)
    - User profile management
-   - Celebrity profile management
-   - Account settings and preferences
-   - Profile verification system
+   - Endpoints:
+     - GET `/api/users/profile` - Get user profile
+     - PUT `/api/users/update` - Update user profile
+     - GET `/api/users/{userId}` - Get user by ID
+     - GET `/api/users/username/{username}` - Get user by username
 
-6. **Post Service** - Port 8083
-   - Create and manage posts
-   - Media handling (images/videos)
-   - Post interactions (likes/comments)
-   - Content sharing functionality
+6. **Post Service** (Port: 8083)
+   - Post management and feed generation
+   - Endpoints:
+     - POST `/api/posts/create` - Create new post
+     - GET `/api/posts/feed` - Get user feed
+     - GET `/api/posts/user` - Get user posts
+     - GET `/api/posts/{postId}` - Get post by ID
 
-7. **Messaging Service** - Port 8084
-   - Real-time messaging system
-   - Private conversations
-   - Message status tracking
-   - Read receipts
+7. **Messaging Service** (Port: 8084)
+   - Real-time messaging and chat
+   - Endpoints:
+     - POST `/api/messages/send` - Send message
+     - GET `/api/messages/conversations` - Get user conversations
+     - GET `/api/messages/{conversationId}` - Get conversation messages
 
-8. **News Feed Service** - Port 8085
-   - Personalized feed generation
-   - Content aggregation
-   - Feed preferences
-   - Trending content algorithm
+8. **News Feed Service** (Port: 8085)
+   - Personalized news feed generation
+   - Endpoints:
+     - GET `/api/news-feed/posts` - Get personalized feed
+     - GET `/api/news-feed/trending` - Get trending posts
 
-9. **Moderation Service** - Port 8086
-   - Content moderation
-   - Report handling
-   - Community guidelines enforcement
-   - Automated content filtering
+9. **Moderation Service** (Port: 8086)
+   - Content moderation and reporting
+   - Endpoints:
+     - POST `/api/moderation/report` - Report content
+     - GET `/api/moderation/status/{contentId}` - Get content status
 
-10. **Notification Service** - Port 8087
-    - Push notifications
-    - Email notifications
-    - In-app notifications
-    - Notification preferences
+10. **Notification Service** (Port: 8087)
+    - Push notifications and alerts
+    - Endpoints:
+      - GET `/api/notifications` - Get user notifications
+      - PUT `/api/notifications/read` - Mark notifications as read
 
-11. **Search Service** - Port 8088
-    - Full-text search
-    - Advanced filtering
-    - Search analytics
-    - Celebrity discovery
+## Message Broker (Apache Kafka)
 
-12. **Award Service** - Port 8089
-    - Achievement management
-    - Badge system
-    - Rewards tracking
-    - Recognition programs
+### Infrastructure
+- Zookeeper (Port: 2181)
+- Kafka Broker (Port: 9092)
+- Kafka UI (Port: 8090)
 
-13. **Rating & Review Service** - Port 8090
-    - User ratings
-    - Review management
-    - Reputation system
-    - Feedback analysis
+### Kafka Topics
+1. `user-events` - User-related events (registration, profile updates)
+2. `post-events` - Post creation and updates
+3. `notification-events` - System notifications
+4. `message-events` - Chat messages
+5. `feed-events` - News feed updates
+6. `rating-events` - Rating and review events
+7. `award-events` - User achievements and awards
+8. `moderation-events` - Content moderation events
+9. `monitoring-events` - System monitoring and metrics
 
-14. **Analytics & Logging Service** - Port 8091
-    - User analytics
-    - System metrics
-    - Audit logging
-    - Performance monitoring
-
-### Mobile Application (Flutter)
-
-The mobile application is built using Flutter and provides:
-
-1. **Authentication**
-   - User registration with role selection
-   - Secure login system
-   - Password recovery
-   - Session management
-
-2. **Celebrity Profiles**
-   - Comprehensive profile management
-   - Multiple information sections
-   - Media gallery
-   - Career highlights
-
-3. **Feed System**
-   - Celebrity content feed
-   - Post interactions
-   - Content sharing
-   - Media support
-
-4. **Notifications**
-   - Real-time notifications
-   - Multiple notification types
-   - Read status tracking
-   - Notification management
-
-5. **Messaging**
-   - Direct messaging
-   - Real-time chat
-   - Message status
-   - Media sharing
-
-## Prerequisites
-
-### Backend Requirements
-- Java 17 or higher
-- PostgreSQL 15+
-- Gradle 7.x
-- Docker (optional)
-
-### Mobile App Requirements
-- Flutter SDK 3.0+
-- Dart 3.0+
-- Android Studio / VS Code
-- iOS development tools (for iOS builds)
-
-## Database Setup
-
-1. Install PostgreSQL 15 or higher
-
-2. Create and configure the database:
+### Starting Kafka
 ```bash
-# Run the database setup script
-./setup_database.bat  # Windows
-./setup_database.sh   # Linux/Mac
-```
-
-**Note on PostgreSQL SSL:** If you encounter connection issues related to SSL, ensure that your PostgreSQL client (e.g., Spring Boot application) is configured to explicitly disable SSL (e.g., by adding `?sslmode=disable` to the JDBC URL in `application.yml` and `config-repo/application.yml`).
-
-The script will:
-- Create the celebratedb database
-- Set up all necessary tables
-- Create indexes for optimization
-- Configure permissions
-- Set up triggers for timestamps
-
-### Database Schema
-
-The system uses a single database (celebratedb) with the following key tables:
-
-1. **users**
-   - Basic user information
-   - Authentication details
-   - Role management
-
-2. **celebrity_profiles**
-   - Detailed celebrity information
-   - Career and personal details
-   - Verification status
-
-3. **posts**
-   - User-generated content
-   - Media attachments
-   - Interaction metrics
-
-4. **comments**
-   - Post interactions
-   - User engagement
-   - Nested discussions
-
-5. **likes**
-   - Content appreciation
-   - Engagement tracking
-   - Analytics support
-
-6. **followers**
-   - User relationships
-   - Following system
-   - Fan management
-
-7. **notifications**
-   - System notifications
-   - User alerts
-   - Event tracking
-
-8. **messages**
-   - Direct communication
-   - Chat history
-   - Message status
-
-## Project Setup and Maintenance
-
-To ensure all services have the necessary Gradle wrapper files and are up-to-date with the repository, use the following scripts:
-
-1.  **Setup Gradle Wrappers for All Services (`setup_gradle_wrappers.sh`)**
-
-    This script cleans up existing Gradle wrapper files, downloads `gradlew` and `gradle-wrapper.properties` from the repository, and then runs `gradle wrapper` for each service to generate the `gradle-wrapper.jar`.
-
-    ```bash
-    ./setup_gradle_wrappers.sh
-    ```
-
-2.  **Update Repository and Setup Gradle (`update_from_github.sh`)**
-
-    This script fetches the latest changes from the GitHub repository, resets your local branch to match the remote, cleans untracked files, and then runs the `setup_gradle_wrappers.sh` script to ensure all Gradle files are correctly set up.
-
-    ```bash
-    ./update_from_github.sh
-    ```
-
-## Service Startup
-
-### Using Scripts
-```bash
-# Windows
-start-services.bat
-
-# Linux/Mac
-./start-services.sh
-```
-
-### Manual Startup Sequence
-
-1. Start core infrastructure:
-   ```bash
-# 1. Service Registry
-cd service-registry && ./gradlew bootRun
-
-# 2. Config Server
-cd config-server && ./gradlew bootRun
-
-# 3. API Gateway
-cd api-gateway && ./gradlew bootRun
-   ```
-
-2. Start essential services:
-```bash
-# Auth Service
-cd auth-service && ./gradlew bootRun
-
-# User Service
-cd user-service && ./gradlew bootRun
-
-# Post Service
-cd post-service && ./gradlew bootRun
-```
-
-3. Start supporting services (any order):
-```bash
-cd notification-service && ./gradlew bootRun
-cd messaging-service && ./gradlew bootRun
-cd search-service && ./gradlew bootRun
-# ... start other services as needed
-```
-
-## Mobile App Setup
-
-1. Clone the repository
-2. Install dependencies:
-```bash
-cd celebrate
-flutter pub get
-```
-
-3. Run the app:
-```bash
-flutter run
-```
-
-## Configuration
-
-### API Gateway Routes
-All requests are routed through port 8080:
-- Authentication: /api/auth/**
-- User management: /api/users/**
-- Posts: /api/posts/**
-- Messages: /api/messages/**
-- Notifications: /api/notifications/**
-
-### Security
-- JWT-based authentication
-- Role-based access control
-- Secure password storage
-- API key management
-- Rate limiting
-
-### Monitoring
-- Eureka Dashboard: http://localhost:8761
-- Spring Boot Admin: http://localhost:8080/admin
-- Actuator endpoints on each service
-- Logging and analytics dashboard
-
-## Docker Support
-
-Build and run with Docker:
-   ```bash
-# Build all services
-docker-compose build
-
-# Run the stack
 docker-compose up -d
 ```
 
-## Kubernetes Support
+Access Kafka UI at: http://localhost:8090
 
-Deploy to Kubernetes:
+## Security Configuration
+
+### JWT Authentication
+
+- Access Token Expiration: 24 hours
+- Refresh Token Expiration: 7 days
+- Token Format: Bearer token
+- Required Headers: `Authorization: Bearer <token>`
+- Token Payload:
+  ```json
+  {
+    "sub": "username",
+    "role": "USER",
+    "iat": timestamp,
+    "exp": timestamp
+  }
+  ```
+
+### CORS Configuration
+
+- Allowed Origins: `http://localhost:*`, `http://127.0.0.1:*`
+- Allowed Methods: GET, POST, PUT, DELETE, OPTIONS, HEAD
+- Allowed Headers: All
+- Exposed Headers: Authorization, Content-Type
+- Allow Credentials: true
+- Max Age: 3600 seconds
+
+## Getting Started
+
+1. Start the Config Server:
+    ```bash
+   cd config-server
+   ./gradlew bootRun
+   ```
+
+2. Start the Service Registry:
+   ```bash
+   cd service-registry
+   ./gradlew bootRun
+   ```
+
+3. Start the Auth Service:
 ```bash
-# Apply configurations
-kubectl apply -f k8s/
+   cd auth-service
+   ./gradlew bootRun
+   ```
 
-# Monitor deployments
-kubectl get pods -n celebrate
-```
+4. Start the API Gateway:
+   ```bash
+   cd api-gateway
+   ./gradlew bootRun
+   ```
 
-## Testing
+5. Start other services as needed.
 
-1. **Backend Testing**
-   - Unit tests for each service
-   - Integration tests
-   - API tests (Postman collections)
-   - Load testing scripts
+## Environment Variables
 
-2. **Mobile App Testing**
-   - Widget tests
-   - Integration tests
-   - End-to-end tests
-   - Performance testing
+- `JWT_SECRET` - JWT signing key (min 32 characters)
+- `SPRING_PROFILES_ACTIVE` - Active Spring profile
+- `CONFIG_SERVER_URL` - Config server URL
+- `EUREKA_SERVER_URL` - Eureka server URL
 
-## Troubleshooting
+## API Documentation
 
-1. **Service Registration Issues**
-   - Verify Eureka server is running
-   - Check service configurations
-   - Validate network connectivity
+Swagger UI is available for each service at:
+- Gateway: http://localhost:8080/swagger-ui.html
+- Auth Service: http://localhost:8081/swagger-ui.html
+- User Service: http://localhost:8082/swagger-ui.html
+- Other services: http://localhost:{port}/swagger-ui.html
 
-2. **Database Connectivity**
-   - Verify PostgreSQL is running
-   - Check connection strings
-   - Validate credentials
+## Monitoring
 
-3. **Mobile App Issues**
-   - Clear cache: `flutter clean`
-   - Update dependencies: `flutter pub get`
-   - Rebuild: `flutter run --release`
-
-## Contributing
-
-Please read CONTRIBUTING.md for contribution guidelines.
-
-## License
-
-This project is licensed under the MIT License - see LICENSE for details.
+- Actuator endpoints are enabled for all services
+- Access metrics at: http://localhost:{port}/actuator
+- Health check at: http://localhost:{port}/actuator/health

@@ -1,104 +1,106 @@
-# Test Script for Microservices
-Write-Host "`n=== Testing Config Server ===" -ForegroundColor Green
-try {
-    $configResponse = Invoke-RestMethod -Uri "http://localhost:8888/auth-service/default" -Method Get
-    Write-Host "Config Server is running and responding" -ForegroundColor Green
-    Write-Host "Sample config: $($configResponse | ConvertTo-Json -Depth 1)"
-} catch {
-    Write-Host "Config Server error: $_" -ForegroundColor Red
-}
+# Test services PowerShell script
 
-Write-Host "`n=== Testing Eureka Server ===" -ForegroundColor Green
-try {
-    $eurekaResponse = Invoke-RestMethod -Uri "http://localhost:8761/eureka/apps" -Method Get
-    Write-Host "Eureka Server is running and responding" -ForegroundColor Green
-    Write-Host "Registered applications: $($eurekaResponse.applications.application.Count)"
-} catch {
-    Write-Host "Eureka Server error: $_" -ForegroundColor Red
-}
+# Helper function to make HTTP requests with error handling
+function Invoke-ServiceRequest {
+    param (
+        [string]$Uri,
+        [string]$Method = "GET",
+        [string]$Body = $null,
+        [string]$ContentType = "application/json",
+        [string]$AuthToken = $null,
+        [string]$ServiceName = "Service"
+    )
 
-Write-Host "`n=== Testing Auth Service ===" -ForegroundColor Green
-try {
-    # Register a test user
-    $registerBody = @{
-        username = "testuser_$(Get-Random)"
-        email = "testuser_$(Get-Random)@example.com"
-        password = "password123"
-        fullName = "Test User"
-        role = "USER"
-    } | ConvertTo-Json
-
-    Write-Host "Registering new user..." -ForegroundColor Yellow
-    $registerResponse = Invoke-RestMethod -Method Post -Uri 'http://localhost:8081/api/auth/register' `
-        -Body $registerBody -ContentType 'application/json'
-    Write-Host "Registration successful. Username: $($registerResponse.username)" -ForegroundColor Green
-
-    # Login with the registered user
-    $loginBody = @{
-        username = $registerResponse.username
-        password = "password123"
-    } | ConvertTo-Json
-
-    Write-Host "Logging in..." -ForegroundColor Yellow
-    $loginResponse = Invoke-RestMethod -Method Post -Uri 'http://localhost:8081/api/auth/login' `
-        -Body $loginBody -ContentType 'application/json'
-    Write-Host "Login successful. Token received." -ForegroundColor Green
-    $token = $loginResponse.token
-} catch {
-    Write-Host "Auth Service error: $_" -ForegroundColor Red
-}
-
-Write-Host "`n=== Testing Search Service ===" -ForegroundColor Green
-try {
-    # Index a test post
-    $postBody = @{
-        title = "Test Post $(Get-Random)"
-        content = "This is a test post content"
-        userId = "1"
-        category = "TEST"
-    } | ConvertTo-Json
-
-    Write-Host "Creating test post..." -ForegroundColor Yellow
-    $headers = @{
-        "Authorization" = "Bearer $token"
-        "Content-Type" = "application/json"
+    $headers = @{}
+    if ($AuthToken) {
+        $headers["Authorization"] = "Bearer $AuthToken"
     }
-    
-    $indexResponse = Invoke-RestMethod -Method Post -Uri 'http://localhost:8084/api/search/index' `
-        -Body $postBody -Headers $headers
-    Write-Host "Post indexed successfully" -ForegroundColor Green
 
-    # Search for posts
-    Write-Host "Searching posts..." -ForegroundColor Yellow
-    $searchResponse = Invoke-RestMethod -Method Get -Uri 'http://localhost:8084/api/search?query=test' `
-        -Headers $headers
-    Write-Host "Search successful. Found $($searchResponse.Count) posts" -ForegroundColor Green
-} catch {
-    Write-Host "Search Service error: $_" -ForegroundColor Red
+    try {
+        if ($Body) {
+            $response = Invoke-WebRequest -Uri $Uri -Method $Method -Body $Body -ContentType $ContentType -Headers $headers
+        } else {
+            $response = Invoke-WebRequest -Uri $Uri -Method $Method -Headers $headers
+        }
+        
+        Write-Host "$ServiceName request successful!" -ForegroundColor Green
+        Write-Host "Response:" -ForegroundColor Cyan
+        $response.Content | ConvertFrom-Json | Format-List
+        return $response
+    } catch {
+        Write-Host "$ServiceName request failed!" -ForegroundColor Red
+        Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
+        if ($_.Exception.Response) {
+            $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
+            $reader.BaseStream.Position = 0
+            $reader.DiscardBufferedData()
+            $responseBody = $reader.ReadToEnd()
+            Write-Host "Response body: $responseBody" -ForegroundColor Red
+        }
+        return $null
+    }
 }
 
-Write-Host "`n=== Testing News Feed Service ===" -ForegroundColor Green
-try {
-    # Create a test post
-    $feedPostBody = @{
-        title = "Feed Test Post $(Get-Random)"
-        content = "This is a test feed post content"
-        userId = "1"
+# Test Service Registry (Eureka)
+Write-Host "`n=== Testing Service Registry (Eureka) ===" -ForegroundColor Green
+Write-Host "`nChecking Eureka status..." -ForegroundColor Yellow
+$eurekaResponse = Invoke-ServiceRequest -Uri "http://localhost:8761/eureka/apps" `
+    -ServiceName "Eureka"
+
+# Test Config Server
+Write-Host "`n=== Testing Config Server ===" -ForegroundColor Green
+Write-Host "`nChecking auth-service config..." -ForegroundColor Yellow
+$configResponse = Invoke-ServiceRequest -Uri "http://localhost:8888/auth-service/default" `
+    -ServiceName "Config Server"
+
+# Test Auth Service
+Write-Host "`n=== Testing Auth Service ===" -ForegroundColor Green
+
+# Generate random username and email to avoid conflicts
+$random = Get-Random
+$username = "testuser_$random"
+$email = "testuser_$random@example.com"
+
+# Test user registration
+$registrationBody = @{
+    username = $username
+    email = $email
+    password = "Test123!"
+    fullName = "Test User"
+} | ConvertTo-Json
+
+Write-Host "`nTesting registration endpoint..." -ForegroundColor Yellow
+Write-Host "Using test credentials:" -ForegroundColor Gray
+Write-Host "Username: $username" -ForegroundColor Gray
+Write-Host "Email: $email" -ForegroundColor Gray
+Write-Host "Password: Test123!" -ForegroundColor Gray
+
+$registrationResponse = Invoke-ServiceRequest -Uri "http://localhost:8080/api/auth/register" `
+    -Method "Post" `
+    -Body $registrationBody `
+    -ServiceName "Registration"
+
+if ($registrationResponse) {
+    # Test user login
+    $loginBody = @{
+        username = $username
+        password = "Test123!"
     } | ConvertTo-Json
 
-    Write-Host "Creating feed post..." -ForegroundColor Yellow
-    $feedResponse = Invoke-RestMethod -Method Post -Uri 'http://localhost:8085/api/feed/posts' `
-        -Body $feedPostBody -Headers $headers
-    Write-Host "Feed post created successfully" -ForegroundColor Green
+    Write-Host "`nTesting login endpoint..." -ForegroundColor Yellow
+    $loginResponse = Invoke-ServiceRequest -Uri "http://localhost:8080/api/auth/login" `
+        -Method "Post" `
+        -Body $loginBody `
+        -ServiceName "Login"
 
-    # Get feed
-    Write-Host "Fetching feed..." -ForegroundColor Yellow
-    $getFeedResponse = Invoke-RestMethod -Method Get -Uri 'http://localhost:8085/api/feed' `
-        -Headers $headers
-    Write-Host "Feed fetched successfully. Found $($getFeedResponse.Count) items" -ForegroundColor Green
-} catch {
-    Write-Host "News Feed Service error: $_" -ForegroundColor Red
+    if ($loginResponse) {
+        $token = ($loginResponse.Content | ConvertFrom-Json).token
+        Write-Host "`nJWT Token:" -ForegroundColor Yellow
+        Write-Host $token -ForegroundColor Gray
+    }
 }
+
+Write-Host "`nTests completed!" -ForegroundColor Cyan
 
 Write-Host "`n=== Testing User Service ===" -ForegroundColor Green
 try {

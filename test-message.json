@@ -1,0 +1,12 @@
+{
+  "eventId": "consumer-test-123",
+  "eventType": "USER_CREATED",
+  "userId": "test-consumer-user",
+  "action": "USER_CREATED",
+  "timestamp": "2025-07-05T14:10:00Z",
+  "data": {
+    "username": "testconsumer",
+    "email": "consumer@test.com",
+    "fullName": "Test Consumer User"
+  }
+} 
