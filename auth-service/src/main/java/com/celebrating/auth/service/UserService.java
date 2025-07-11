@@ -27,7 +27,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User getUserById(Long id) {
+    public User getUserById(java.util.UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
@@ -39,7 +39,7 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(Long id, User userDetails) {
+    public User updateUser(java.util.UUID id, User userDetails) {
         User user = getUserById(id);
         user.setFullName(userDetails.getFullName());
         user.setEmail(userDetails.getEmail());
@@ -50,7 +50,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Long id) {
+    public void deleteUser(java.util.UUID id) {
         if (!userRepository.existsById(id)) {
             throw new RuntimeException("User not found");
         }

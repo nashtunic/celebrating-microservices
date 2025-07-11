@@ -32,6 +32,14 @@ public class AuthController {
     @Autowired
     private JwtService jwtService;
 
+    @GetMapping({"/api/auth/health", "/health"})
+    public ResponseEntity<?> health() {
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "UP");
+        response.put("service", "auth-service");
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping({"/api/auth/login", "/login"})
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
@@ -57,7 +65,11 @@ public class AuthController {
             }
             
             User registeredUser = authService.register(user);
-            Map<String, Object> response = authService.login(registeredUser.getUsername(), user.getPassword());
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Registration successful");
+            response.put("userId", registeredUser.getId());
+            response.put("username", registeredUser.getUsername());
+            response.put("email", registeredUser.getEmail());
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
             Map<String, String> response = new HashMap<>();
