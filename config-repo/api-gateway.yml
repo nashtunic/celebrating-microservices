@@ -11,69 +11,81 @@ spring:
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
-            - Path=/api/v1/auth/**
+            - Path=/api/auth/**
           filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/(?<segment>.*), /$\{segment}
+            - RewritePath=/api/auth/(?<segment>.*), /${segment}
+            - AddRequestHeader=X-Forwarded-Prefix, /api/auth
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/v1/users/**
+            - Path=/api/users/**
           filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/(?<segment>.*), /$\{segment}
+            - RewritePath=/api/users/(?<segment>.*), /${segment}
+            - AddRequestHeader=X-Forwarded-Prefix, /api/users
+            - JwtAuthentication
         - id: post-service
           uri: lb://POST-SERVICE
           predicates:
-            - Path=/api/v1/posts/**
+            - Path=/api/posts/**
+          filters:
+            - AddRequestHeader=X-Forwarded-Prefix, /api/posts
+            - JwtAuthentication
         - id: messaging-service
           uri: lb://MESSAGING-SERVICE
           predicates:
-            - Path=/api/v1/messages/**
+            - Path=/api/messages/**
+          filters:
+            - RewritePath=/api/messages/(?<segment>.*), /${segment}
+            - AddRequestHeader=X-Forwarded-Prefix, /api/messages
+            - JwtAuthentication
         - id: notification-service
           uri: lb://NOTIFICATION-SERVICE
           predicates:
-            - Path=/api/v1/notifications/**
-        - id: search-service
-          uri: lb://SEARCH-SERVICE
+            - Path=/api/notifications/**
+          filters:
+            - JwtAuthentication
+        - id: news-feed-service
+          uri: lb://NEWS-FEED-SERVICE
           predicates:
-            - Path=/api/v1/search/**
-        - id: rating-review-service
-          uri: lb://RATING-REVIEW-SERVICE
-          predicates:
-            - Path=/api/v1/ratings/**, /api/v1/reviews/**
-        - id: award-service
-          uri: lb://AWARD-SERVICE
-          predicates:
-            - Path=/api/v1/awards/**
+            - Path=/api/news-feed/**
+          filters:
+            - JwtAuthentication
         - id: moderation-service
           uri: lb://MODERATION-SERVICE
           predicates:
-            - Path=/api/v1/moderation/**
-        - id: analytics-logging-service
-          uri: lb://ANALYTICS-LOGGING-SERVICE
+            - Path=/api/moderation/**
+          filters:
+            - JwtAuthentication
+        - id: search-service
+          uri: lb://SEARCH-SERVICE
           predicates:
-            - Path=/api/v1/analytics/**, /api/v1/logs/**
+            - Path=/api/search/**
+          filters:
+            - JwtAuthentication
+        - id: award-service
+          uri: lb://AWARD-SERVICE
+          predicates:
+            - Path=/api/awards/**
+          filters:
+            - JwtAuthentication
 
 server:
-  port: 8443
-  ssl:
-    enabled: true
-    key-store: /opt/celebrating-microservices/ssl/api-gateway.p12
-    key-store-password: celebrate123
-    key-store-type: PKCS12
-    key-alias: api-gateway
+  port: 8080
+
+jwt:
+  secret: ${JWT_SECRET:8y/B?E(H+MbQeThWmZq4t6w9z$C&F)J@NcRfUjXn2r5u8x/A%D*G-KaPdSgVkYp3}
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://197.254.53.252:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: 197.254.53.252
-    secure-port-enabled: true
-    non-secure-port-enabled: false
-    secure-port: ${server.port}
+    hostname: localhost
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
 
 management:
   endpoints:
@@ -82,4 +94,12 @@ management:
         include: "*"
   endpoint:
     health:
-      show-details: always 
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.netty: DEBUG
+    io.netty: DEBUG 
