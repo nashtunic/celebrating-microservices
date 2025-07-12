@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # GitHub repository URL
-GITHUB_REPO="https://github.com/nashtunic/celebrating-microservices.git"
+GITHUB_REPO="https://github.com/FKdevelopers254/celebrating-microservices.git"
 
 echo "Updating repository from GitHub..."
 
