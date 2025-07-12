@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # GitHub repository raw URL
-GITHUB_REPO_RAW_URL="https://raw.githubusercontent.com/nashtunic/celebrating-microservices/main"
+GITHUB_REPO_RAW_URL="https://raw.githubusercontent.com/FKdevelopers254/celebrating-microservices/main"
 
 # Array of service directories
 SERVICE_DIRS=(
